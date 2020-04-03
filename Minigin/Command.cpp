@@ -1,27 +1,23 @@
+#include "MiniginPCH.h"
 #include "Command.h"
-#include "ServiceLocator.h"
 #include <iostream>
 void JumpCommand::Execute()
 {
-	ServiceLocator::GetInstance()->GetAudio()->PlayMusic(0);
 	std::cout << "Jump button has been pressed \n";
 }
 
 void FireCommand::Execute()
 {
-	ServiceLocator::GetInstance()->GetAudio()->PlayMusic(1);
 	std::cout << "Fire button has been pressed \n";
 }
 
 void SwapWeapon::Execute()
 {
-	ServiceLocator::GetInstance()->GetAudio()->PlayMusic(2);
 	std::cout << "SwapWeapon button has been pressed \n";
 }
 
 void Crouch::Execute()
 {
-	ServiceLocator::GetInstance()->GetAudio()->PlayMusic(3);
 	std::cout << "Crouch button has been pressed \n";
 }
 
