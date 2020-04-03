@@ -82,6 +82,9 @@
     <ClInclude Include="SceneObject.h">
       <Filter>GameObjects</Filter>
     </ClInclude>
+    <ClInclude Include="Command.h">
+      <Filter>Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
@@ -128,6 +131,9 @@
     </ClCompile>
     <ClCompile Include="FPSObject.cpp">
       <Filter>GameObjects\Prefabs</Filter>
+    </ClCompile>
+    <ClCompile Include="Command.cpp">
+      <Filter>GameObjects</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
