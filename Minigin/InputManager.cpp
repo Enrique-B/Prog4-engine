@@ -3,7 +3,7 @@
 #include "Command.h"
 #include <SDL.h>
 #include <ostream>
-
+// just a debug thingy 
 std::ostream& operator<<(std::ostream& os, const ControllerButton& cb)
 {
 	switch (cb)
