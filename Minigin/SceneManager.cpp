@@ -2,7 +2,7 @@
 #include "SceneManager.h"
 #include "Scene.h"
 
-void SceneManager::Update(float elapsedSec)
+void Fried::SceneManager::Update(float elapsedSec)
 {
 	for(auto& scene : m_pScenes)
 	{
@@ -10,7 +10,7 @@ void SceneManager::Update(float elapsedSec)
 	}
 }
 
-void SceneManager::Render()
+void Fried::SceneManager::Render()
 {
 	for (const auto& scene : m_pScenes)
 	{
@@ -18,7 +18,7 @@ void SceneManager::Render()
 	}
 }
 
-SceneManager::~SceneManager()
+Fried::SceneManager::~SceneManager()
 {
 	const size_t size{ m_pScenes.size() };
 	for (size_t i = 0; i < size; i++)
@@ -27,7 +27,7 @@ SceneManager::~SceneManager()
 	}
 }
 
-void SceneManager::AddScene(Scene* pScene)
+void Fried::SceneManager::AddScene(Fried::Scene* pScene)
 {
 	if (pScene)
 	{

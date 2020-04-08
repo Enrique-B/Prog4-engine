@@ -30,7 +30,7 @@ void FPSComponent::Update(float elapsedSec)
 	}
 }
 
-void FPSComponent::Render(const float2& pos) const
+void FPSComponent::Render(const Fried::float2& pos) const
 {
 	UNREFERENCED_PARAMETER(pos);
 }

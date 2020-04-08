@@ -1,9 +1,16 @@
 #pragma once
 #include "BaseComponent.h"
+
 struct SDL_Texture;
 	/**
 	 * Simple RAII wrapper for an SDL_Texture
 	 */
+namespace Fried
+{
+	struct float2;
+}
+
+
 class TextureComponent : public BaseComponent
 {
 public:
@@ -11,7 +18,7 @@ public:
 	explicit TextureComponent(SDL_Texture* texture);
 	~TextureComponent();
 	virtual void Update(float elapsedSec);
-	virtual void Render(const float2& pos)const ;
+	virtual void Render(const Fried::float2& pos)const;
 
 	TextureComponent(const TextureComponent&) = delete;
 	TextureComponent(TextureComponent&&) = delete;

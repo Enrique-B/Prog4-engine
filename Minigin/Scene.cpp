@@ -2,19 +2,18 @@
 #include "Scene.h"
 #include "SceneObject.h"
 
+unsigned int Fried::Scene::m_IdCounter = 0;
 
-unsigned int Scene::m_IdCounter = 0;
-
-Scene::Scene(const std::string& name) : m_Name(name) {
+Fried::Scene::Scene(const std::string& name) : m_Name(name) {
 	Initialize();
 }
 
-void Scene::Initialize()
+void Fried::Scene::Initialize()
 {
 }
 
 
-Scene::~Scene()
+Fried::Scene::~Scene()
 {
 	const size_t size{ m_pObjects.size() };
 	for (size_t i = 0; i < size; i++)
@@ -23,13 +22,13 @@ Scene::~Scene()
 	}
 }
 
-void Scene::Add(SceneObject* object)
+void Fried::Scene::Add(SceneObject* object)
 {
 	m_pObjects.push_back(object);
 }
 
 
-void Scene::Render() const
+void Fried::Scene::Render() const
 {
 	for (const auto& object : m_pObjects)
 	{

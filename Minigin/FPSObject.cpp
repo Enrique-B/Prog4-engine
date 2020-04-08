@@ -5,7 +5,7 @@
 #include "TransformComponent.h"
 #include "ResourceManager.h"
 
-FPSObject::FPSObject()
+Fried::FPSObject::FPSObject()
 	:SceneObject()
 {
 	AddComponent(ComponentName::TransFrom, new TransformComponent{});
@@ -13,7 +13,7 @@ FPSObject::FPSObject()
 	AddComponent(ComponentName::FPS, new FPSComponent{});
 }
 
-FPSObject::~FPSObject()
+Fried::FPSObject::~FPSObject()
 {
 	for (const auto& pair : m_pComponents)
 	{
@@ -21,7 +21,7 @@ FPSObject::~FPSObject()
 	}
 }
 
-void FPSObject::Update(float elapsedSec)
+void Fried::FPSObject::Update(float elapsedSec)
 {
 	TextComponent* pText = dynamic_cast<TextComponent*>(m_pComponents.at(ComponentName::Text));
 	FPSComponent* pFPS = dynamic_cast<FPSComponent*>(m_pComponents.at(ComponentName::FPS));
@@ -35,17 +35,17 @@ void FPSObject::Update(float elapsedSec)
 	}
 }
 
-void FPSObject::Render() const
+void Fried::FPSObject::Render() const
 {
 	TransformComponent* pTransform = dynamic_cast<TransformComponent*>(m_pComponents.at(ComponentName::TransFrom));
-	const float2 pos = pTransform->GetPosition();
+	const Fried::float2 pos = pTransform->GetPosition();
 	for (const auto& map : m_pComponents)
 	{
 		map.second->Render(pos);
 	}
 }
 
-void FPSObject::AddComponent(ComponentName componentName, BaseComponent* pComponent)
+void Fried::FPSObject::AddComponent(ComponentName componentName, BaseComponent* pComponent)
 {
 	if (pComponent != nullptr)
 	{

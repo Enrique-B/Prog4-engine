@@ -3,48 +3,49 @@
 #include "Command.h"
 #include <SDL.h>
 #include <ostream>
+
 // just a debug thingy 
-std::ostream& operator<<(std::ostream& os, const ControllerButton& cb)
+std::ostream& operator<<(std::ostream& os, const Fried::ControllerButton& cb)
 {
 	switch (cb)
 	{
-	case ControllerButton::ButtonA:
+	case Fried::ControllerButton::ButtonA:
 		os << "ButtonA";
 		break;
-	case ControllerButton::ButtonB:
+	case Fried::ControllerButton::ButtonB:
 		os << "ButtonB";
 		break;
-	case ControllerButton::ButtonX:
+	case Fried::ControllerButton::ButtonX:
 		os << "ButtonX";
 		break;
-	case ControllerButton::ButtonY:
+	case Fried::ControllerButton::ButtonY:
 		os << "ButtonY";
 		break;
-	case ControllerButton::DPadUp:
+	case Fried::ControllerButton::DPadUp:
 		os << "DPadUp";
 		break;
-	case ControllerButton::DPadDown:
+	case Fried::ControllerButton::DPadDown:
 		os << "DPadDown";
 		break;
-	case ControllerButton::DPadRight:
+	case Fried::ControllerButton::DPadRight:
 		os << "DPadRight";
 		break;
-	case ControllerButton::DPadLeft:
+	case Fried::ControllerButton::DPadLeft:
 		os << "DPadLeft";
 		break;
-	case ControllerButton::StartButton:
+	case Fried::ControllerButton::StartButton:
 		os << "StartButton";
 		break;
-	case ControllerButton::RightTrigger:
+	case Fried::ControllerButton::RightTrigger:
 		os << "RightTrigger";
 		break;
-	case ControllerButton::LeftTrigger:
+	case Fried::ControllerButton::LeftTrigger:
 		os << "LeftTrigger";
 		break;
-	case ControllerButton::RightBumper:
+	case Fried::ControllerButton::RightBumper:
 		os << "RightBumper";
 		break;
-	case ControllerButton::LeftBumbper:
+	case Fried::ControllerButton::LeftBumbper:
 		os << "LeftBumbper";
 		break;
 	default:
@@ -53,7 +54,7 @@ std::ostream& operator<<(std::ostream& os, const ControllerButton& cb)
 	return os;
 }
 
-InputManager::~InputManager()
+Fried::InputManager::~InputManager()
 {
 	size_t size{ m_ControllerCommandVector.size() };
 	for (size_t i = 0; i < size; i++)
@@ -67,7 +68,7 @@ InputManager::~InputManager()
 	}
 }
 
-bool InputManager::ProcessInput()
+bool Fried::InputManager::ProcessInput()
 {
 	ZeroMemory(&m_CurrentState, sizeof(XINPUT_STATE));
 	XInputGetState(0, &m_CurrentState);
@@ -82,7 +83,7 @@ bool InputManager::ProcessInput()
 	return true;
 }
 
-bool InputManager::IsControllerButtonPressed(ControllerButton button) const
+bool Fried::InputManager::IsControllerButtonPressed(Fried::ControllerButton button) const
 {
 	switch (button)
 	{
@@ -116,7 +117,7 @@ bool InputManager::IsControllerButtonPressed(ControllerButton button) const
 	}
 }
 
-bool InputManager::IsKeyboardButtonPressed(SDL_Scancode scancode) const
+bool Fried::InputManager::IsKeyboardButtonPressed(SDL_Scancode scancode) const
 {
 	SDL_Event e{};
 	while (SDL_PollEvent(&e))
@@ -129,7 +130,7 @@ bool InputManager::IsKeyboardButtonPressed(SDL_Scancode scancode) const
 	return false;
 }
 
-void InputManager::HandleInput()
+void Fried::InputManager::HandleInput()
 {
 	ProcessInput();
 	size_t size{ m_ControllerCommandVector.size() };
@@ -150,7 +151,7 @@ void InputManager::HandleInput()
 	}
 }
 
-void InputManager::AddCommand(ControllerButton cb, Command* pCommand)
+void Fried::InputManager::AddCommand(ControllerButton cb, Command* pCommand)
 {
 	const size_t size{ m_ControllerCommandVector.size() };
 	for (size_t i = 0; i < size; i++)
@@ -163,7 +164,15 @@ void InputManager::AddCommand(ControllerButton cb, Command* pCommand)
 	m_ControllerCommandVector.push_back(std::make_pair(cb, pCommand));
 }
 
-void InputManager::AddCommand(SDL_Scancode sc, Command* pCommand)
+void Fried::InputManager::AddCommand(SDL_Scancode sc, Command* pCommand)
 {
+	const size_t size{ m_KeyboardCommandVector.size() };
+	for (size_t i = 0; i < size; i++)
+	{
+		if (m_KeyboardCommandVector[i].first == sc)
+		{
+			std::cout << "controllerButton is already in use " << sc << std::endl;
+		}
+	}
 	m_KeyboardCommandVector.push_back(std::make_pair(sc, pCommand));
 }

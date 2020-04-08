@@ -1,10 +1,7 @@
 #pragma once
-#pragma warning(push)
-#pragma warning (disable:4201)
-#include <glm/vec3.hpp>
-#pragma warning(pop)
 #include "BaseComponent.h"
-class TransformComponent final : public BaseComponent 
+#include "Structs.h"
+class TransformComponent final : public BaseComponent
 {
 public:
 	TransformComponent();
@@ -14,9 +11,9 @@ public:
 	TransformComponent& operator=(TransformComponent&& other) = delete;
 	~TransformComponent() = default;
 	virtual void Update(float elapsedSec);
-	virtual void Render(const float2& pos)const;
-	const float2& GetPosition() const { return m_Position; }
+	virtual void Render(const Fried::float2& pos)const;
+	const Fried::float2& GetPosition() const { return m_Position; }
 	void SetPosition(float x, float y);
 private:
-	float2 m_Position;
+	Fried::float2 m_Position;
 };

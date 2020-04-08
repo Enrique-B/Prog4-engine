@@ -26,22 +26,20 @@ void DemoScene::Update(float elapsedSec)
 
 void DemoScene::Initialize()
 {
-	GameObject* pBackground{ new GameObject{} };
-	pBackground->AddComponent(ComponentName::Texture, new TextureComponent{ ResourceManager::GetInstance()->LoadTexture("background.jpg") });
+	Fried::GameObject* pBackground{ new Fried::GameObject{} };
+	pBackground->AddComponent(ComponentName::Texture, new TextureComponent{ Fried::ResourceManager::GetInstance()->LoadTexture("background.jpg") });
 	Add(pBackground);
 
-	GameObject* pLogo{ new GameObject{} };
-	pLogo->AddComponent(ComponentName::Texture, new TextureComponent{ ResourceManager::GetInstance()->LoadTexture("logo.png") });
+	Fried::GameObject* pLogo{ new Fried::GameObject{} };
+	pLogo->AddComponent(ComponentName::Texture, new TextureComponent{ Fried::ResourceManager::GetInstance()->LoadTexture("logo.png") });
 	pLogo->SetPosition(216, 180);
 	Add(pLogo);
 
-	
-
-	GameObject* pText = new GameObject{};
-	pText->AddComponent(ComponentName::Text ,new TextComponent("Programming 4 Assignment", ResourceManager::GetInstance()->LoadFont("Lingua.otf", 36)));
+	Fried::GameObject* pText = new Fried::GameObject{};
+	pText->AddComponent(ComponentName::Text ,new TextComponent("Programming 4 Assignment", Fried::ResourceManager::GetInstance()->LoadFont("Lingua.otf", 36)));
 	pText->SetPosition(80, 30);
 	Add(pText);
 
-	FPSObject* pFPSObject{ new FPSObject{} };
+	Fried::FPSObject* pFPSObject{ new Fried::FPSObject{} };
 	Add(pFPSObject);
 }

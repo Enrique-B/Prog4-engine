@@ -12,13 +12,11 @@
 #include "GameObject.h"
 #include "Scene.h"
 
-// scenes 
-#include "DemoScene.h"
 
 using namespace std;
 using namespace std::chrono;
 
-void Minigin::Initialize()
+void Fried::Minigin::Initialize()
 {
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) 
 	{
@@ -41,15 +39,7 @@ void Minigin::Initialize()
 	Renderer::GetInstance()->Init(m_Window);
 }
 
-/**
- * Code constructing the scene world starts here
- */
-void Minigin::LoadGame() const
-{
-	SceneManager::GetInstance()->AddScene(new DemoScene{});
-}
-
-void Minigin::Cleanup()
+void Fried::Minigin::Cleanup()
 {
 	SDL_DestroyWindow(m_Window);
 	m_Window = nullptr;
@@ -61,12 +51,12 @@ void Minigin::Cleanup()
 	delete SceneManager::GetInstance(); 
 }
 
-void Minigin::Run()
+void Fried::Minigin::Run()
 {
 	Initialize();
 
 	// tell the resource manager where he can find the game data
-	ResourceManager::GetInstance()->Init("../Data/");
+	Fried::ResourceManager::GetInstance()->Init("../Data/");
 
 	LoadGame();
 

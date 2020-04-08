@@ -1,13 +1,12 @@
 #pragma once
 #include "BaseComponent.h"
-
-class Font;
 struct SDL_Texture;
+class Font;
 class TextComponent final : public BaseComponent
 {
 public:
 	virtual void Update(float elapsedSec);
-	virtual void Render(const float2& pos) const;
+	virtual void Render(const Fried::float2& pos) const;
 
 	void SetText(const std::string& text);
 

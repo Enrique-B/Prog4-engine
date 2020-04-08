@@ -8,7 +8,7 @@
 #include "TextureComponent.h"
 #include "Font.h"
 
-ResourceManager::~ResourceManager()
+Fried::ResourceManager::~ResourceManager()
 {
 	for (auto temp :m_pFontMap)
 	{
@@ -20,7 +20,7 @@ ResourceManager::~ResourceManager()
 	}
 }
 
-void ResourceManager::Init(const std::string& dataPath)
+void Fried::ResourceManager::Init(const std::string& dataPath)
 {
 	m_DataPath = dataPath;
 
@@ -42,7 +42,7 @@ void ResourceManager::Init(const std::string& dataPath)
 	}
 }
 
-SDL_Texture* ResourceManager::LoadTexture(const std::string& file)
+SDL_Texture* Fried::ResourceManager::LoadTexture(const std::string& file)
 {
 	const auto fullPath = m_DataPath + file;
 	if (m_pTextureMap.find(fullPath) == m_pTextureMap.end())
@@ -58,7 +58,7 @@ SDL_Texture* ResourceManager::LoadTexture(const std::string& file)
 	return m_pTextureMap[fullPath];
 }
 
-Font* ResourceManager::LoadFont(const std::string& file, unsigned int size)
+Font* Fried::ResourceManager::LoadFont(const std::string& file, unsigned int size)
 {
 	std::string fullPath = m_DataPath + file;
 	std::pair<std::string, unsigned int>pair{ fullPath, size };

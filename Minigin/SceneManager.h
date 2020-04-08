@@ -1,17 +1,21 @@
 #pragma once
 #include "Singleton.h"
+#include <vector>
 
-class Scene;
-class SceneManager final : public Singleton<SceneManager>
+namespace Fried
 {
-public:
-	void AddScene(Scene* pScene);
+class Scene;
+	class SceneManager final : public Singleton<SceneManager>
+	{
+	public:
+		void AddScene(Scene* pScene);
 
-	void Update(float elapsedSec);
-	void Render();
-	~SceneManager();
-private:
-	friend class Singleton<SceneManager>;
-	SceneManager() = default;
-	std::vector<Scene*> m_pScenes;
-};
+		void Update(float elapsedSec);
+		void Render();
+		~SceneManager();
+	private:
+		friend class Singleton<SceneManager>;
+		SceneManager() = default;
+		std::vector<Scene*> m_pScenes;
+	};
+}

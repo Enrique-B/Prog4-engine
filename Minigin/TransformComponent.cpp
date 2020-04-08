@@ -12,7 +12,7 @@ void TransformComponent::Update(float elapsedSec)
 	UNREFERENCED_PARAMETER(elapsedSec);
 }
 
-void TransformComponent::Render(const float2& pos) const
+void TransformComponent::Render(const Fried::float2& pos) const
 {
 	UNREFERENCED_PARAMETER(pos);
 }

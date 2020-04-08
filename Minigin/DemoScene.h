@@ -1,7 +1,7 @@
 #pragma once
 #include "Scene.h"
 class TextComponent;
-class DemoScene : public Scene
+class DemoScene : public Fried::Scene
 {
 public: 
 	DemoScene(); 

@@ -1,5 +1,3 @@
-// Game.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
 #include "MiniginPCH.h"
 
 #if _DEBUG
@@ -8,11 +6,11 @@
 #endif
 
 #include "SDL.h"
-#include "Minigin.h"
+#include "FriedEngine.h"
 
-int main()
+int main(int, char* []) 
 {
-	Minigin engine;
+	Fried::FriedEngine engine;
 	engine.Run();
 	return 0;
 }

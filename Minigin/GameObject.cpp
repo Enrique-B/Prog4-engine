@@ -5,7 +5,7 @@
 #include "TransformComponent.h"
 #include "TextureComponent.h"
 
-GameObject::~GameObject()
+Fried::GameObject::~GameObject()
 {
 	for (auto pair : m_pComponents)
 	{
@@ -13,7 +13,7 @@ GameObject::~GameObject()
 	}
 }
 
-void GameObject::Update(float elapsedSec)
+void Fried::GameObject::Update(float elapsedSec)
 {
 	for (const auto& map : m_pComponents)
 	{
@@ -21,7 +21,7 @@ void GameObject::Update(float elapsedSec)
 	}
 }
 
-void GameObject::Render() const
+void Fried::GameObject::Render() const
 {
 	if (!m_CanRender)
 	{
@@ -35,13 +35,13 @@ void GameObject::Render() const
 	}
 }
 
-void GameObject::SetPosition(float x, float y)
+void Fried::GameObject::SetPosition(float x, float y)
 {
 	TransformComponent* pTransform = static_cast<TransformComponent*>(m_pComponents.at(ComponentName::TransFrom));
 	pTransform->SetPosition(x, y);
 }
 
-void GameObject::AddComponent(ComponentName componentName, BaseComponent* pComponent)
+void Fried::GameObject::AddComponent(ComponentName componentName, BaseComponent* pComponent)
 {
 	if (pComponent != nullptr)
 	{
@@ -60,7 +60,7 @@ void GameObject::AddComponent(ComponentName componentName, BaseComponent* pCompo
 	}
 }
 
-GameObject::GameObject()
+Fried::GameObject::GameObject()
 	:m_CanRender{false}
 {
 	m_pComponents.emplace(ComponentName::TransFrom, new TransformComponent{});
