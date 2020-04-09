@@ -21,9 +21,6 @@
     <Filter Include="Helpers">
       <UniqueIdentifier>{272861f5-4398-4462-82b6-acc10a69cfb6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameObjects\Prefabs">
-      <UniqueIdentifier>{3c9b682f-d15c-49da-a0d8-83aab409e3b7}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Minigin.h" />
@@ -70,14 +67,11 @@
     <ClInclude Include="Structs.h">
       <Filter>Helpers</Filter>
     </ClInclude>
-    <ClInclude Include="FPSObject.h">
-      <Filter>GameObjects\Prefabs</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneObject.h">
-      <Filter>GameObjects</Filter>
-    </ClInclude>
     <ClInclude Include="BinaryReaderWriter.h">
       <Filter>Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="SpriteComponent.h">
+      <Filter>Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -119,8 +113,8 @@
     <ClCompile Include="TextureComponent.cpp">
       <Filter>Components</Filter>
     </ClCompile>
-    <ClCompile Include="FPSObject.cpp">
-      <Filter>GameObjects\Prefabs</Filter>
+    <ClCompile Include="SpriteComponent.cpp">
+      <Filter>Components</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

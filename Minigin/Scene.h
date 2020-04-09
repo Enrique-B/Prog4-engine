@@ -1,13 +1,13 @@
 #pragma once
 #include "SceneManager.h"
 #include <string>
+class GameObject;	
 namespace Fried
 {
-class SceneObject;	
 	class Scene
 	{
 	public:
-		void Add(SceneObject* object);
+		void Add(GameObject* object);
 
 		virtual void Update(float elapsedSec) = 0;
 		void Render() const;
@@ -20,7 +20,7 @@ class SceneObject;
 	protected:
 		explicit Scene(const std::string& name);
 		virtual void Initialize();
-		std::vector <SceneObject*> m_pObjects{};
+		std::vector <GameObject*> m_pObjects{};
 	private:
 
 		std::string m_Name;

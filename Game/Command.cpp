@@ -1,6 +1,7 @@
 #include "MiniginPCH.h"
 #include "Command.h"
 #include <iostream>
+
 void JumpCommand::Execute()
 {
 	std::cout << "Jump button has been pressed \n";

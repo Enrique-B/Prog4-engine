@@ -1,10 +1,6 @@
 #pragma once
 
 struct _TTF_Font;
-
-	/**
-	 * Simple RAII wrapper for an _TTF_Font
-	 */
 class Font
 {
 public:

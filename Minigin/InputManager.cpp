@@ -1,6 +1,6 @@
 #include "MiniginPCH.h"
 #include "InputManager.h"
-#include "Command.h"
+#include "../../Game/Command.h"
 #include <SDL.h>
 #include <ostream>
 

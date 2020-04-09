@@ -31,21 +31,17 @@ void Fried::Renderer::Destroy()
 	}
 }
 
-void Fried::Renderer::RenderTexture(SDL_Texture* texture, const float x, const float y) const
+void Fried::Renderer::RenderTexture(SDL_Texture* texture, const float x, const float y, const int width, const int height) const
 {
 	SDL_Rect dst;
 	dst.x = static_cast<int>(x);
 	dst.y = static_cast<int>(y);
-	SDL_QueryTexture(texture, nullptr, nullptr, &dst.w, &dst.h);
+	dst.w = (width);
+	dst.h = (height);
 	SDL_RenderCopy(m_Renderer, texture, nullptr, &dst);
 }
 
-void Fried::Renderer::RenderTexture(SDL_Texture* texture, const float x, const float y, const float width, const float height) const
+void Fried::Renderer::RenderTexture(SDL_Texture* texture, SDL_Rect resource, SDL_Rect dest) const
 {
-	SDL_Rect dst;
-	dst.x = static_cast<int>(x);
-	dst.y = static_cast<int>(y);
-	dst.w = static_cast<int>(width);
-	dst.h = static_cast<int>(height);
-	SDL_RenderCopy(m_Renderer, texture, nullptr, &dst);
+	SDL_RenderCopy(m_Renderer, texture, &resource, &dest);
 }

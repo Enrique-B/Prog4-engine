@@ -10,7 +10,7 @@ public:
 
 	void SetText(const std::string& text);
 
-	explicit TextComponent(const std::string& text, Font* font);
+	explicit TextComponent(const std::string& text, const std::string& fileName, size_t size);
 	virtual  ~TextComponent();
 	TextComponent(const TextComponent& other) = delete;
 	TextComponent(TextComponent&& other) = delete;
@@ -20,5 +20,7 @@ private:
 	bool m_NeedsUpdate;
 	std::string m_Text;
 	Font* m_Font;
-	SDL_Texture* m_Texture;
+	SDL_Texture* m_pTexture;
+	int m_TextureWidth;
+	int m_TextureHeight;
 };

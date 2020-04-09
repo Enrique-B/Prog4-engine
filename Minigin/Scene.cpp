@@ -1,7 +1,6 @@
 #include "MiniginPCH.h"
 #include "Scene.h"
-#include "SceneObject.h"
-
+#include "GameObject.h"
 unsigned int Fried::Scene::m_IdCounter = 0;
 
 Fried::Scene::Scene(const std::string& name) : m_Name(name) {
@@ -12,7 +11,6 @@ void Fried::Scene::Initialize()
 {
 }
 
-
 Fried::Scene::~Scene()
 {
 	const size_t size{ m_pObjects.size() };
@@ -22,7 +20,7 @@ Fried::Scene::~Scene()
 	}
 }
 
-void Fried::Scene::Add(SceneObject* object)
+void Fried::Scene::Add(GameObject* object)
 {
 	m_pObjects.push_back(object);
 }

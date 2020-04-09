@@ -10,11 +10,11 @@
 
 Fried::ResourceManager::~ResourceManager()
 {
-	for (auto temp :m_pFontMap)
+	for (auto& temp :m_pFontMap)
 	{
 		SafeDelete(temp.second);
 	}
-	for (auto temp : m_pTextureMap)
+	for (auto& temp : m_pTextureMap)
 	{
 		SDL_DestroyTexture(temp.second);
 	}
@@ -54,7 +54,6 @@ SDL_Texture* Fried::ResourceManager::LoadTexture(const std::string& file)
 		}
 		m_pTextureMap[fullPath] = texture;
 	}
-
 	return m_pTextureMap[fullPath];
 }
 

@@ -5,6 +5,7 @@ TransformComponent::TransformComponent()
 	:BaseComponent()
 	,m_Position{0,0}
 {
+	SetComponentName(ComponentName::TransFrom);
 }
 
 void TransformComponent::Update(float elapsedSec)

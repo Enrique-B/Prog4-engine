@@ -21,21 +21,27 @@
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Minigin\DemoScene.cpp">
+    <ClCompile Include="FriedEngine.cpp" />
+    <ClCompile Include="BubleBobleScene.cpp">
       <Filter>scenes</Filter>
     </ClCompile>
-    <ClCompile Include="FriedEngine.cpp" />
-    <ClCompile Include="..\Minigin\Command.cpp">
+    <ClCompile Include="Command.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DemoScene.cpp">
+      <Filter>scenes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Minigin\DemoScene.h">
+    <ClInclude Include="FriedEngine.h" />
+    <ClInclude Include="BubleBobleScene.h">
       <Filter>scenes</Filter>
     </ClInclude>
-    <ClInclude Include="FriedEngine.h" />
-    <ClInclude Include="..\Minigin\Command.h">
+    <ClInclude Include="Command.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DemoScene.h">
+      <Filter>scenes</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

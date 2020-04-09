@@ -7,6 +7,7 @@ FPSComponent::FPSComponent()
 	,m_FPS{0}
 	,m_DidFPSChange{false}
 {
+	SetComponentName(ComponentName::FPS);
 }
 
 FPSComponent::~FPSComponent()

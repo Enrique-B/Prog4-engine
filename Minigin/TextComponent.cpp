@@ -8,14 +8,23 @@
 #include "TextureComponent.h"
 #include "TransformComponent.h"
 #include "Structs.h"
+#include "ResourceManager.h"
 
-TextComponent::TextComponent(const std::string& text, Font* font)
-	: BaseComponent(), m_NeedsUpdate(true), m_Text(text), m_Font(font), m_Texture(nullptr)
-{ }
+TextComponent::TextComponent(const std::string& text, const std::string& fileName, size_t size)
+	: BaseComponent()
+	, m_NeedsUpdate(true)
+	, m_Text(text)
+	, m_Font(Fried::ResourceManager::GetInstance()->LoadFont(fileName,size))
+	, m_pTexture(nullptr)
+	, m_TextureWidth{}
+	, m_TextureHeight{}
+{
+	SetComponentName(ComponentName::Text);
+}
 
 TextComponent::~TextComponent()
 {
-	SDL_DestroyTexture(m_Texture);
+	SDL_DestroyTexture(m_pTexture);
 }
 
 void TextComponent::Update(float elapsedSec)
@@ -35,17 +44,18 @@ void TextComponent::Update(float elapsedSec)
 			throw std::runtime_error(std::string("Create text texture from surface failed: ") + SDL_GetError());
 		}
 		SDL_FreeSurface(surf);
-		SDL_DestroyTexture(m_Texture);
-		m_Texture = texture;
+		SDL_DestroyTexture(m_pTexture);
+		m_pTexture = texture;
+		SDL_QueryTexture(texture, nullptr, nullptr, &m_TextureWidth, &m_TextureHeight);
 		m_NeedsUpdate = false;
 	}
 }
 
 void TextComponent::Render(const Fried::float2& pos) const
 {
-	if (m_Texture != nullptr)
+	if (m_pTexture != nullptr)
 	{
-		Fried::Renderer::GetInstance()->RenderTexture(m_Texture, pos.x, pos.y);
+		Fried::Renderer::GetInstance()->RenderTexture(m_pTexture, pos.x, pos.y,m_TextureWidth,m_TextureHeight);
 	}
 }
 

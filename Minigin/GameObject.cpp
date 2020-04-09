@@ -4,64 +4,70 @@
 #include "Renderer.h"
 #include "TransformComponent.h"
 #include "TextureComponent.h"
+#include "SpriteComponent.h"
 
-Fried::GameObject::~GameObject()
+GameObject::GameObject()
 {
-	for (auto pair : m_pComponents)
+	m_pTranform = new TransformComponent{};
+	m_pComponents.push_back(m_pTranform);
+}
+
+GameObject::~GameObject()
+{
+	const size_t size{ m_pComponents.size() };
+	for (size_t i = 0; i < size; i++)
 	{
-		SafeDelete(pair.second);
+		SafeDelete(m_pComponents[i]);
 	}
 }
 
-void Fried::GameObject::Update(float elapsedSec)
+void GameObject::Update(float elapsedSec)
 {
-	for (const auto& map : m_pComponents)
+	const size_t size{ m_pComponents.size() };
+	for (size_t i = 0; i < size; i++)
 	{
-		map.second->Update(elapsedSec);
+		m_pComponents[i]->Update(elapsedSec);
 	}
 }
 
-void Fried::GameObject::Render() const
+void GameObject::Render() const
 {
-	if (!m_CanRender)
+	const Fried::float2 pos = m_pTranform->GetPosition();
+	const size_t size{ m_pComponents.size() };
+	for (size_t i = 0; i < size; i++)
 	{
-		return;
-	}
-	TransformComponent* pTransform = dynamic_cast<TransformComponent*>(m_pComponents.at(ComponentName::TransFrom));
-	const float2 pos = pTransform->GetPosition();
-	for (const auto& map : m_pComponents)
-	{
-		map.second->Render(pos);
+		m_pComponents[i]->Render(pos);
 	}
 }
 
-void Fried::GameObject::SetPosition(float x, float y)
+void GameObject::SetPosition(float x, float y)
 {
-	TransformComponent* pTransform = static_cast<TransformComponent*>(m_pComponents.at(ComponentName::TransFrom));
-	pTransform->SetPosition(x, y);
+	m_pTranform->SetPosition(x, y);
 }
 
-void Fried::GameObject::AddComponent(ComponentName componentName, BaseComponent* pComponent)
+void GameObject::AddComponent(BaseComponent* pComponent)
 {
 	if (pComponent != nullptr)
 	{
-		if (m_pComponents.find(componentName) == m_pComponents.end())
+		if (pComponent->GetComponentName() != ComponentName::TransFrom)
 		{
-			m_pComponents.emplace(componentName, pComponent);
-			if (componentName == ComponentName::Texture || componentName == ComponentName::Text)
-			{
-				m_CanRender = true;
-			}
+			m_pComponents.push_back(pComponent);
 		}
 		else
 		{
-			std::cout << "component was already in the in the GameObject\n";
+			std::cout << "there can only be one TransformComponent per GameObject" << std::endl;
 		}
 	}
 }
 
-Fried::GameObject::GameObject()
-	:m_CanRender{false}
+bool GameObject::HasComponent(ComponentName name) const
 {
-	m_pComponents.emplace(ComponentName::TransFrom, new TransformComponent{});
+	for (auto component : m_pComponents)
+	{
+		if (component->GetComponentName() == name)
+		{
+			return true;
+		}
+	}
+	return false;
 }
