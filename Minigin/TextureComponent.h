@@ -8,7 +8,6 @@ class TextureComponent : public BaseComponent
 public:
 	explicit TextureComponent(const std::string& textureName);
 	~TextureComponent();
-	virtual void Update(float elapsedSec);
 	virtual void Render(const Fried::float2& pos)const;
 
 	TextureComponent(const TextureComponent&) = delete;

@@ -17,11 +17,6 @@ TextureComponent::~TextureComponent()
 {
 }
 
-void TextureComponent::Update(float elapsedSec)
-{
-	UNREFERENCED_PARAMETER(elapsedSec);
-}
-
 void TextureComponent::Render(const Fried::float2& pos) const
 {
 	if (m_pTexture)

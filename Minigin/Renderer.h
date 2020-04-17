@@ -17,7 +17,6 @@ namespace Fried
 		void Render() const;
 		void Destroy();
 
-		void RenderTexture(SDL_Texture* texture, float x, float y) const;
 		void RenderTexture(SDL_Texture* texture, float x, float y, int width, int height) const;
 		void RenderTexture(SDL_Texture* texture, SDL_Rect resource, SDL_Rect dest)const;
 		SDL_Renderer* GetSDLRenderer() const { return m_Renderer; }

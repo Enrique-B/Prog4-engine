@@ -23,8 +23,8 @@ public:
 	BaseComponent& operator=(const BaseComponent& other) = delete;
 	BaseComponent& operator=(BaseComponent&& other) = delete;
 	virtual ~BaseComponent() = default;
-	virtual void Update(float elapsedSec) = 0;
-	virtual void Render(const Fried::float2& pos)const = 0;
+	virtual void Update(float elapsedSec) { UNREFERENCED_PARAMETER(elapsedSec); };
+	virtual void Render(const Fried::float2& pos)const { UNREFERENCED_PARAMETER(pos); };
 	ComponentName GetComponentName()const { return m_ComponentName; };
 protected: 
 	void SetComponentName(ComponentName name) { m_ComponentName = name; };

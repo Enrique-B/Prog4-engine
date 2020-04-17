@@ -10,8 +10,6 @@ public:
 	TransformComponent& operator=(const TransformComponent& other) = delete;
 	TransformComponent& operator=(TransformComponent&& other) = delete;
 	~TransformComponent() = default;
-	virtual void Update(float elapsedSec);
-	virtual void Render(const Fried::float2& pos)const;
 	const Fried::float2& GetPosition() const { return m_Position; }
 	void SetPosition(float x, float y);
 private:

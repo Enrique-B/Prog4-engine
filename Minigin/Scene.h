@@ -12,7 +12,7 @@ namespace Fried
 		virtual void Update(float elapsedSec) = 0;
 		void Render() const;
 
-		~Scene();
+		virtual ~Scene();
 		Scene(const Scene& other) = delete;
 		Scene(Scene&& other) = delete;
 		Scene& operator=(const Scene& other) = delete;

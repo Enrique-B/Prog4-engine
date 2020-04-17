@@ -36,7 +36,14 @@ void Fried::Minigin::Initialize()
 		throw std::runtime_error(std::string("SDL_CreateWindow Error: ") + SDL_GetError());
 	}
 
+	if (SDL_Init(SDL_INIT_AUDIO) < 0)
+	{
+		throw std::runtime_error(std::string("SDL_INIT_AUDIO Error: ") + SDL_GetError());
+	}
 	Renderer::GetInstance()->Init(m_Window);
+	// tell the resource manager where he can find the game data
+	Fried::ResourceManager::GetInstance()->Init("../Data/");
+
 }
 
 void Fried::Minigin::Cleanup()
@@ -54,10 +61,6 @@ void Fried::Minigin::Cleanup()
 void Fried::Minigin::Run()
 {
 	Initialize();
-
-	// tell the resource manager where he can find the game data
-	Fried::ResourceManager::GetInstance()->Init("../Data/");
-
 	LoadGame();
 
 	{

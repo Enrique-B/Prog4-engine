@@ -7,7 +7,6 @@ public:
     FPSComponent();
     ~FPSComponent();
     virtual void Update(float elapsedSec);
-    virtual void Render(const Fried::float2& pos)const;
     size_t GetFPS()const;
     bool DidFPSChange()const;
 private:

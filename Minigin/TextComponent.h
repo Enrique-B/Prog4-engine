@@ -10,7 +10,7 @@ public:
 
 	void SetText(const std::string& text);
 
-	explicit TextComponent(const std::string& text, const std::string& fileName, size_t size);
+	explicit TextComponent(const std::string& text, const std::string& fileName, unsigned int size);
 	virtual  ~TextComponent();
 	TextComponent(const TextComponent& other) = delete;
 	TextComponent(TextComponent&& other) = delete;

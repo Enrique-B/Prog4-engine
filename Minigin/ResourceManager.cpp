@@ -3,7 +3,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
-
+#include <SDL_mixer.h>
 #include "Renderer.h"
 #include "TextureComponent.h"
 #include "Font.h"
@@ -39,6 +39,12 @@ void Fried::ResourceManager::Init(const std::string& dataPath)
 	if (TTF_Init() != 0) 
 	{
 		throw std::runtime_error(std::string("Failed to load support for fonts: ") + SDL_GetError());
+	}	
+	
+	// initialize sdl_mixer
+	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
+	{
+		throw std::runtime_error(std::string("Failed MIX_DEFAULT_FORMAT: ") + Mix_GetError());
 	}
 }
 

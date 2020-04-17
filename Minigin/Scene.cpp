@@ -18,6 +18,7 @@ Fried::Scene::~Scene()
 	{
 		SafeDelete(m_pObjects[i]);
 	}
+	m_pObjects.clear();
 }
 
 void Fried::Scene::Add(GameObject* object)

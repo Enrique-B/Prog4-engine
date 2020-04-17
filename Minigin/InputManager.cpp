@@ -56,10 +56,10 @@ std::ostream& operator<<(std::ostream& os, const Fried::ControllerButton& cb)
 
 Fried::InputManager::~InputManager()
 {
-	size_t size{ m_ControllerCommandVector.size() };
+	size_t size{ m_Controller1CommandVector.size() };
 	for (size_t i = 0; i < size; i++)
 	{
-		SafeDelete(m_ControllerCommandVector[i].second);
+		SafeDelete(m_Controller1CommandVector[i].second);
 	}
 	size = m_KeyboardCommandVector.size();
 	for (size_t i = 0; i < size; i++)
@@ -71,7 +71,10 @@ Fried::InputManager::~InputManager()
 bool Fried::InputManager::ProcessInput()
 {
 	ZeroMemory(&m_CurrentState, sizeof(XINPUT_STATE));
-	XInputGetState(0, &m_CurrentState);
+	for (size_t i = 0; i < MaxNumbersOfControllers; i++)
+	{
+		XInputGetState(0, &m_CurrentState[i]);
+	}
 	SDL_Event e{};
 	while (SDL_PollEvent(&e))
 	{
@@ -83,36 +86,36 @@ bool Fried::InputManager::ProcessInput()
 	return true;
 }
 
-bool Fried::InputManager::IsControllerButtonPressed(Fried::ControllerButton button) const
+bool Fried::InputManager::IsControllerButtonPressed(size_t controllerNumber, Fried::ControllerButton button) const
 {
 	switch (button)
 	{
 	case ControllerButton::ButtonA:
-		return m_CurrentState.Gamepad.wButtons & XINPUT_GAMEPAD_A;
+		return m_CurrentState[controllerNumber].Gamepad.wButtons & XINPUT_GAMEPAD_A;
 	case ControllerButton::ButtonB:
-		return m_CurrentState.Gamepad.wButtons & XINPUT_GAMEPAD_B;
+		return m_CurrentState[controllerNumber].Gamepad.wButtons & XINPUT_GAMEPAD_B;
 	case ControllerButton::ButtonX:
-		return m_CurrentState.Gamepad.wButtons & XINPUT_GAMEPAD_X;
+		return m_CurrentState[controllerNumber].Gamepad.wButtons & XINPUT_GAMEPAD_X;
 	case ControllerButton::ButtonY:
-		return m_CurrentState.Gamepad.wButtons & XINPUT_GAMEPAD_Y;
+		return m_CurrentState[controllerNumber].Gamepad.wButtons & XINPUT_GAMEPAD_Y;
 	case ControllerButton::DPadDown:
-		return m_CurrentState.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_DOWN;
+		return m_CurrentState[controllerNumber].Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_DOWN;
 	case ControllerButton::DPadUp:
-		return m_CurrentState.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_UP;
+		return m_CurrentState[controllerNumber].Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_UP;
 	case ControllerButton::DPadRight:
-		return m_CurrentState.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_RIGHT;
+		return m_CurrentState[controllerNumber].Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_RIGHT;
 	case ControllerButton::DPadLeft:
-		return m_CurrentState.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_LEFT;
+		return m_CurrentState[controllerNumber].Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_LEFT;
 	case ControllerButton::StartButton:
-		return m_CurrentState.Gamepad.wButtons & XINPUT_GAMEPAD_START;
+		return m_CurrentState[controllerNumber].Gamepad.wButtons & XINPUT_GAMEPAD_START;
 	case ControllerButton::RightTrigger:
-		return m_CurrentState.Gamepad.bRightTrigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD;
+		return m_CurrentState[controllerNumber].Gamepad.bRightTrigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD;
 	case ControllerButton::LeftTrigger:
-		return m_CurrentState.Gamepad.bLeftTrigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD;
+		return m_CurrentState[controllerNumber].Gamepad.bLeftTrigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD;
 	case ControllerButton::RightBumper:
-		return m_CurrentState.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER;
+		return m_CurrentState[controllerNumber].Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER;
 	case ControllerButton::LeftBumbper:
-		return m_CurrentState.Gamepad.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER;
+		return m_CurrentState[controllerNumber].Gamepad.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER;
 	default: return false;
 	}
 }
@@ -133,14 +136,23 @@ bool Fried::InputManager::IsKeyboardButtonPressed(SDL_Scancode scancode) const
 void Fried::InputManager::HandleInput()
 {
 	ProcessInput();
-	size_t size{ m_ControllerCommandVector.size() };
+	size_t size{ m_Controller1CommandVector.size() };
 	for (size_t i = 0; i < size; i++)
 	{
-		if (IsControllerButtonPressed(m_ControllerCommandVector[i].first))
+		if (IsControllerButtonPressed(0,m_Controller1CommandVector[i].first))
 		{
-			m_ControllerCommandVector[i].second->Execute();
+			m_Controller1CommandVector[i].second->Execute();
 		}
 	}
+	size = m_Controller2CommandVector.size();
+	for (size_t i = 0; i < size; i++)
+	{
+		if (IsControllerButtonPressed(1, m_Controller2CommandVector[i].first))
+		{
+			m_Controller2CommandVector[i].second->Execute();
+		}
+	}
+
 	size = m_KeyboardCommandVector.size();
 	for (size_t i = 0; i < size; i++)
 	{
@@ -151,17 +163,33 @@ void Fried::InputManager::HandleInput()
 	}
 }
 
-void Fried::InputManager::AddCommand(ControllerButton cb, Command* pCommand)
+void Fried::InputManager::AddCommand(size_t controllerNumber, ControllerButton cb, Command* pCommand)
 {
-	const size_t size{ m_ControllerCommandVector.size() };
-	for (size_t i = 0; i < size; i++)
+	if (controllerNumber == 0)
 	{
-		if (m_ControllerCommandVector[i].first == cb)
+		const size_t size{ m_Controller1CommandVector.size() };
+		for (size_t i = 0; i < size; i++)
 		{
-			std::cout << "controllerButton is already in use " << cb << std::endl;
+			if (m_Controller1CommandVector[i].first == cb)
+			{
+				std::cout << "controllerButton is already in use " << cb << std::endl;
+			}
 		}
+		m_Controller1CommandVector.push_back(std::make_pair(cb, pCommand));
 	}
-	m_ControllerCommandVector.push_back(std::make_pair(cb, pCommand));
+	else if (controllerNumber == 1)
+	{
+		const size_t size{ m_Controller2CommandVector.size() };
+		for (size_t i = 0; i < size; i++)
+		{
+			if (m_Controller2CommandVector[i].first == cb)
+			{
+				std::cout << "controllerButton is already in use " << cb << std::endl;
+			}
+		}
+		m_Controller2CommandVector.push_back(std::make_pair(cb, pCommand));
+	}
+	
 }
 
 void Fried::InputManager::AddCommand(SDL_Scancode sc, Command* pCommand)

@@ -31,11 +31,6 @@ void FPSComponent::Update(float elapsedSec)
 	}
 }
 
-void FPSComponent::Render(const Fried::float2& pos) const
-{
-	UNREFERENCED_PARAMETER(pos);
-}
-
 size_t FPSComponent::GetFPS() const
 {
 	return m_FPS;
