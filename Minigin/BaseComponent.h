@@ -12,6 +12,7 @@ enum class ComponentName
 	Text = 3,
 	FPS = 4,
 	Sprite = 5,
+	state = 6,
 };
 
 class BaseComponent

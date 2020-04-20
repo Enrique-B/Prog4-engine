@@ -9,6 +9,9 @@
 #include "TransformComponent.h"
 #include "FPSComponent.h"
 
+#include "InputManager.h"
+#include "Command.h"
+
 DemoScene::DemoScene()
 	:Scene("DemoScene")
 {
@@ -50,6 +53,10 @@ void DemoScene::Initialize()
 	m_pFPSObject =  new GameObject{ };
 	m_pFPSObject->AddComponent(new TextComponent{ "60 FPS", "Lingua.otf", 36 });
 	m_pFPSObject->AddComponent(new FPSComponent{});
-
 	Add(m_pFPSObject);
+
+
+	//GameObject* pGameObject{ new GameObject{} };
+
+	//Fried::InputManager::GetInstance()->AddControllerCommand(0, ControllerButton::ButtonA, new JumpCommand{ pGameObject });
 }

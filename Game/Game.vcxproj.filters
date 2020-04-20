@@ -31,6 +31,9 @@
     <ClCompile Include="DemoScene.cpp">
       <Filter>scenes</Filter>
     </ClCompile>
+    <ClCompile Include="BaseState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FriedEngine.h" />
@@ -42,6 +45,9 @@
     </ClInclude>
     <ClInclude Include="DemoScene.h">
       <Filter>scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseState.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

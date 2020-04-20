@@ -15,11 +15,11 @@
     <Filter Include="Scene">
       <UniqueIdentifier>{ed1a80ab-33b8-46ae-ac09-e08b7ced2f10}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Graphics">
-      <UniqueIdentifier>{a2a2ea4e-9ddb-4268-afaf-86b258f8f488}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Helpers">
       <UniqueIdentifier>{272861f5-4398-4462-82b6-acc10a69cfb6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Helpers\Graphics">
+      <UniqueIdentifier>{a2a2ea4e-9ddb-4268-afaf-86b258f8f488}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -47,7 +47,7 @@
       <Filter>GameObjects</Filter>
     </ClInclude>
     <ClInclude Include="Font.h">
-      <Filter>Graphics</Filter>
+      <Filter>Helpers\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="BaseComponent.h">
       <Filter>Components</Filter>
@@ -73,6 +73,15 @@
     <ClInclude Include="SpriteComponent.h">
       <Filter>Components</Filter>
     </ClInclude>
+    <ClInclude Include="StateComponent.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Components.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="BubleBobbleLevelDataReader.h">
+      <Filter>Helpers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Minigin.cpp" />
@@ -96,7 +105,7 @@
       <Filter>Scene</Filter>
     </ClCompile>
     <ClCompile Include="Font.cpp">
-      <Filter>Graphics</Filter>
+      <Filter>Helpers\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="TransformComponent.cpp">
       <Filter>Components</Filter>
@@ -115,6 +124,12 @@
     </ClCompile>
     <ClCompile Include="SpriteComponent.cpp">
       <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="StateComponent.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="BubleBobbleLevelDataReader.cpp">
+      <Filter>Helpers</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

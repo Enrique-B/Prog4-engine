@@ -22,13 +22,15 @@ void Fried::Minigin::Initialize()
 	{
 		throw std::runtime_error(std::string("SDL_Init Error: ") + SDL_GetError());
 	}
+	const int windowWidth{ 32 * 24 };
+	const int windowHeight{ 25 * 24 };
 
 	m_Window = SDL_CreateWindow(
 		"Programming 4 assignment",
 		SDL_WINDOWPOS_UNDEFINED,
 		SDL_WINDOWPOS_UNDEFINED,
-		640,
-		480,
+		windowWidth,
+		windowHeight,
 		SDL_WINDOW_OPENGL
 	);
 	if (m_Window == nullptr) 
@@ -75,6 +77,7 @@ void Fried::Minigin::Run()
 			std::chrono::steady_clock::time_point t1 = std::chrono::steady_clock::now();
 
 			doContinue = input->ProcessInput();
+			input->HandleInput();
 			sceneManager->Update(elapsedSec);
 			renderer->Render();
 			

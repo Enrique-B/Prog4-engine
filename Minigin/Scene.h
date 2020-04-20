@@ -7,10 +7,11 @@ namespace Fried
 	class Scene
 	{
 	public:
+		explicit Scene(const std::string& name);
 		void Add(GameObject* object);
 
-		virtual void Update(float elapsedSec) = 0;
-		void Render() const;
+		virtual void Update(float elapsedSec);
+		virtual void Render() const;
 
 		virtual ~Scene();
 		Scene(const Scene& other) = delete;
@@ -18,7 +19,6 @@ namespace Fried
 		Scene& operator=(const Scene& other) = delete;
 		Scene& operator=(Scene&& other) = delete;
 	protected:
-		explicit Scene(const std::string& name);
 		virtual void Initialize();
 		std::vector <GameObject*> m_pObjects{};
 	private:

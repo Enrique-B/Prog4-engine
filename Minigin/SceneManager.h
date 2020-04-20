@@ -9,13 +9,14 @@ class Scene;
 	{
 	public:
 		void AddScene(Scene* pScene);
-
+		void NextScene();
 		void Update(float elapsedSec);
 		void Render();
 		~SceneManager();
 	private:
 		friend class Singleton<SceneManager>;
-		SceneManager() = default;
+		SceneManager() : m_CurrentScene{0} {};
 		std::vector<Scene*> m_pScenes;
+		size_t m_CurrentScene;
 	};
 }

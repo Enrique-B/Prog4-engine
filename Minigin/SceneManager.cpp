@@ -4,18 +4,12 @@
 
 void Fried::SceneManager::Update(float elapsedSec)
 {
-	for(auto& scene : m_pScenes)
-	{
-		scene->Update(elapsedSec);
-	}
+	m_pScenes[m_CurrentScene]->Update(elapsedSec);
 }
 
 void Fried::SceneManager::Render()
 {
-	for (const auto& scene : m_pScenes)
-	{
-		scene->Render();
-	}
+	m_pScenes[m_CurrentScene]->Render();
 }
 
 Fried::SceneManager::~SceneManager()
@@ -30,11 +24,14 @@ Fried::SceneManager::~SceneManager()
 void Fried::SceneManager::AddScene(Fried::Scene* pScene)
 {
 	if (pScene)
-	{
 		m_pScenes.push_back(pScene);
-	}
 	else
-	{
 		throw("scene was a nullpoiter");
-	}
+}
+
+void Fried::SceneManager::NextScene()
+{
+	m_CurrentScene++; 
+	if (m_CurrentScene > m_pScenes.size()-1)
+		m_CurrentScene = 0;
 }

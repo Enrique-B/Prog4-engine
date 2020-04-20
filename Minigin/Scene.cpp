@@ -27,6 +27,15 @@ void Fried::Scene::Add(GameObject* object)
 }
 
 
+void Fried::Scene::Update(float elapsedSec)
+{
+	for (const auto& object : m_pObjects)
+	{
+		object->Update(elapsedSec);
+	}
+
+}
+
 void Fried::Scene::Render() const
 {
 	for (const auto& object : m_pObjects)

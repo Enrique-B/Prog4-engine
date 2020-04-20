@@ -4,48 +4,115 @@
 #include <SDL.h>
 #include <ostream>
 
+Input::Input(Command* pC, inputState st, SDL_Scancode scan, size_t cn, ControllerButton cb)
+{
+	if (pCommand == nullptr)
+	{
+		std::runtime_error(std::string("pCommand was nullptr"));
+	}
+	pCommand = pC;
+	state = st;
+	keyboardKey = scan;
+	useKeyboard = true;
+	if (cn < MaxNumbersOfControllers)
+	{
+		useController = true;
+		controllerNumber = cn;
+		button = cb;
+	}
+	else
+	{
+		useController = false;
+		controllerNumber = 3;
+		button = cb;
+	}
+	wasButtonPressedLastFrame = false;
+	wasKeyPressedLastFrame = false;
+}
+Input::Input(Command* pC, inputState st, SDL_Scancode scan)
+{
+	if (pCommand == nullptr)
+	{
+		std::runtime_error(std::string("pCommand was nullptr"));
+	}
+	pCommand = pC;
+	state = st;
+	keyboardKey = scan;
+	useKeyboard = true;
+	useController = false;
+	controllerNumber = 3; 
+	button = ControllerButton::StartButton;
+	wasButtonPressedLastFrame = false;
+	wasKeyPressedLastFrame = false;
+}
+
+Input::Input(Command* pC, inputState st, size_t cn, ControllerButton cb)
+{
+	if (pCommand == nullptr)
+	{
+		std::runtime_error(std::string("pCommand was nullptr"));
+	}
+	pCommand = pC;
+	state = st;
+	useKeyboard = false;
+	if (cn < MaxNumbersOfControllers)
+	{
+		useController = true;
+		controllerNumber = cn;
+		button = cb;
+	}
+	else
+	{
+		useController = false;
+		controllerNumber = 3;
+		button = cb;
+	}
+	wasButtonPressedLastFrame = false;
+	wasKeyPressedLastFrame = false;
+}
+
 // just a debug thingy 
-std::ostream& operator<<(std::ostream& os, const Fried::ControllerButton& cb)
+std::ostream& operator<<(std::ostream& os, const ControllerButton& cb)
 {
 	switch (cb)
 	{
-	case Fried::ControllerButton::ButtonA:
+	case ControllerButton::ButtonA:
 		os << "ButtonA";
 		break;
-	case Fried::ControllerButton::ButtonB:
+	case ControllerButton::ButtonB:
 		os << "ButtonB";
 		break;
-	case Fried::ControllerButton::ButtonX:
+	case ControllerButton::ButtonX:
 		os << "ButtonX";
 		break;
-	case Fried::ControllerButton::ButtonY:
+	case ControllerButton::ButtonY:
 		os << "ButtonY";
 		break;
-	case Fried::ControllerButton::DPadUp:
+	case ControllerButton::DPadUp:
 		os << "DPadUp";
 		break;
-	case Fried::ControllerButton::DPadDown:
+	case ControllerButton::DPadDown:
 		os << "DPadDown";
 		break;
-	case Fried::ControllerButton::DPadRight:
+	case ControllerButton::DPadRight:
 		os << "DPadRight";
 		break;
-	case Fried::ControllerButton::DPadLeft:
+	case ControllerButton::DPadLeft:
 		os << "DPadLeft";
 		break;
-	case Fried::ControllerButton::StartButton:
+	case ControllerButton::StartButton:
 		os << "StartButton";
 		break;
-	case Fried::ControllerButton::RightTrigger:
+	case ControllerButton::RightTrigger:
 		os << "RightTrigger";
 		break;
-	case Fried::ControllerButton::LeftTrigger:
+	case ControllerButton::LeftTrigger:
 		os << "LeftTrigger";
 		break;
-	case Fried::ControllerButton::RightBumper:
+	case ControllerButton::RightBumper:
 		os << "RightBumper";
 		break;
-	case Fried::ControllerButton::LeftBumbper:
+	case ControllerButton::LeftBumbper:
 		os << "LeftBumbper";
 		break;
 	default:
@@ -56,151 +123,98 @@ std::ostream& operator<<(std::ostream& os, const Fried::ControllerButton& cb)
 
 Fried::InputManager::~InputManager()
 {
-	size_t size{ m_Controller1CommandVector.size() };
+	const size_t size{ m_CommandVector.size() };
 	for (size_t i = 0; i < size; i++)
-	{
-		SafeDelete(m_Controller1CommandVector[i].second);
-	}
-	size = m_KeyboardCommandVector.size();
-	for (size_t i = 0; i < size; i++)
-	{
-		SafeDelete(m_KeyboardCommandVector[i].second);
-	}
+		SafeDelete(m_CommandVector[i].pCommand);
 }
 
 bool Fried::InputManager::ProcessInput()
 {
 	ZeroMemory(&m_CurrentState, sizeof(XINPUT_STATE));
 	for (size_t i = 0; i < MaxNumbersOfControllers; i++)
-	{
 		XInputGetState(0, &m_CurrentState[i]);
-	}
 	SDL_Event e{};
 	while (SDL_PollEvent(&e))
 	{
 		if (e.type == SDL_QUIT)
-		{
 			return false;
-		}
 	}
 	return true;
 }
 
-bool Fried::InputManager::IsControllerButtonPressed(size_t controllerNumber, Fried::ControllerButton button) const
+bool Fried::InputManager::IsControllerButtonPressed(size_t controllerNumber, ControllerButton button) const
 {
 	switch (button)
 	{
-	case ControllerButton::ButtonA:
-		return m_CurrentState[controllerNumber].Gamepad.wButtons & XINPUT_GAMEPAD_A;
-	case ControllerButton::ButtonB:
-		return m_CurrentState[controllerNumber].Gamepad.wButtons & XINPUT_GAMEPAD_B;
-	case ControllerButton::ButtonX:
-		return m_CurrentState[controllerNumber].Gamepad.wButtons & XINPUT_GAMEPAD_X;
-	case ControllerButton::ButtonY:
-		return m_CurrentState[controllerNumber].Gamepad.wButtons & XINPUT_GAMEPAD_Y;
-	case ControllerButton::DPadDown:
-		return m_CurrentState[controllerNumber].Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_DOWN;
-	case ControllerButton::DPadUp:
-		return m_CurrentState[controllerNumber].Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_UP;
-	case ControllerButton::DPadRight:
-		return m_CurrentState[controllerNumber].Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_RIGHT;
-	case ControllerButton::DPadLeft:
-		return m_CurrentState[controllerNumber].Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_LEFT;
-	case ControllerButton::StartButton:
-		return m_CurrentState[controllerNumber].Gamepad.wButtons & XINPUT_GAMEPAD_START;
-	case ControllerButton::RightTrigger:
-		return m_CurrentState[controllerNumber].Gamepad.bRightTrigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD;
-	case ControllerButton::LeftTrigger:
-		return m_CurrentState[controllerNumber].Gamepad.bLeftTrigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD;
-	case ControllerButton::RightBumper:
-		return m_CurrentState[controllerNumber].Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER;
-	case ControllerButton::LeftBumbper:
-		return m_CurrentState[controllerNumber].Gamepad.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER;
+	case ControllerButton::ButtonA: return m_CurrentState[controllerNumber].Gamepad.wButtons & XINPUT_GAMEPAD_A;
+	case ControllerButton::ButtonB: return m_CurrentState[controllerNumber].Gamepad.wButtons & XINPUT_GAMEPAD_B;
+	case ControllerButton::ButtonX: return m_CurrentState[controllerNumber].Gamepad.wButtons & XINPUT_GAMEPAD_X;
+	case ControllerButton::ButtonY: return m_CurrentState[controllerNumber].Gamepad.wButtons & XINPUT_GAMEPAD_Y;
+	case ControllerButton::DPadDown: return m_CurrentState[controllerNumber].Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_DOWN;
+	case ControllerButton::DPadUp: return m_CurrentState[controllerNumber].Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_UP;
+	case ControllerButton::DPadRight: return m_CurrentState[controllerNumber].Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_RIGHT;
+	case ControllerButton::DPadLeft: return m_CurrentState[controllerNumber].Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_LEFT;
+	case ControllerButton::StartButton: return m_CurrentState[controllerNumber].Gamepad.wButtons & XINPUT_GAMEPAD_START;
+	case ControllerButton::RightTrigger: return m_CurrentState[controllerNumber].Gamepad.bRightTrigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD;
+	case ControllerButton::LeftTrigger: return m_CurrentState[controllerNumber].Gamepad.bLeftTrigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD;
+	case ControllerButton::RightBumper: return m_CurrentState[controllerNumber].Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER;
+	case ControllerButton::LeftBumbper: return m_CurrentState[controllerNumber].Gamepad.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER;
 	default: return false;
 	}
 }
 
 bool Fried::InputManager::IsKeyboardButtonPressed(SDL_Scancode scancode) const
 {
-	SDL_Event e{};
-	while (SDL_PollEvent(&e))
+	const Uint8* keyboardState = SDL_GetKeyboardState(NULL);
+	return keyboardState[scancode];
+}
+
+void Fried::InputManager::AddCommand(const Input& input)
+{
+	if (!input.useController && !input.useKeyboard)
 	{
-		if (e.type == SDL_KEYDOWN)
-		{
-			return (e.key.keysym.scancode == scancode);
-		}
+		std::runtime_error(std::string("input useController and keyboard was false"));
 	}
-	return false;
+	m_CommandVector.push_back(input);
 }
 
 void Fried::InputManager::HandleInput()
 {
 	ProcessInput();
-	size_t size{ m_Controller1CommandVector.size() };
+	const size_t size{m_CommandVector.size()};
 	for (size_t i = 0; i < size; i++)
 	{
-		if (IsControllerButtonPressed(0,m_Controller1CommandVector[i].first))
+		if (m_CommandVector[i].useKeyboard)
 		{
-			m_Controller1CommandVector[i].second->Execute();
-		}
-	}
-	size = m_Controller2CommandVector.size();
-	for (size_t i = 0; i < size; i++)
-	{
-		if (IsControllerButtonPressed(1, m_Controller2CommandVector[i].first))
-		{
-			m_Controller2CommandVector[i].second->Execute();
-		}
-	}
-
-	size = m_KeyboardCommandVector.size();
-	for (size_t i = 0; i < size; i++)
-	{
-		if (IsKeyboardButtonPressed(m_KeyboardCommandVector[i].first))
-		{
-			m_KeyboardCommandVector[i].second->Execute();
-		}
-	}
-}
-
-void Fried::InputManager::AddCommand(size_t controllerNumber, ControllerButton cb, Command* pCommand)
-{
-	if (controllerNumber == 0)
-	{
-		const size_t size{ m_Controller1CommandVector.size() };
-		for (size_t i = 0; i < size; i++)
-		{
-			if (m_Controller1CommandVector[i].first == cb)
+			if (IsKeyboardButtonPressed(m_CommandVector[i].keyboardKey))
 			{
-				std::cout << "controllerButton is already in use " << cb << std::endl;
+				m_CommandVector[i].wasKeyPressedLastFrame = true;
+				if (m_CommandVector[i].state == inputState::pressed)
+				{
+					m_CommandVector[i].pCommand->Execute();
+				}
+			}
+			else if (m_CommandVector[i].wasKeyPressedLastFrame && m_CommandVector[i].state == inputState::release)
+			{
+				m_CommandVector[i].wasKeyPressedLastFrame = false; 
+				m_CommandVector[i].pCommand->Execute();
 			}
 		}
-		m_Controller1CommandVector.push_back(std::make_pair(cb, pCommand));
-	}
-	else if (controllerNumber == 1)
-	{
-		const size_t size{ m_Controller2CommandVector.size() };
-		for (size_t i = 0; i < size; i++)
+		if (m_CommandVector[i].useController)
 		{
-			if (m_Controller2CommandVector[i].first == cb)
+			if (IsControllerButtonPressed(m_CommandVector[i].controllerNumber, m_CommandVector[i].button))
 			{
-				std::cout << "controllerButton is already in use " << cb << std::endl;
+				m_CommandVector[i].wasButtonPressedLastFrame = true;
+				if (m_CommandVector[i].state == inputState::pressed)
+				{
+					m_CommandVector[i].pCommand->Execute();
+				}
+			}
+			else if (m_CommandVector[i].wasButtonPressedLastFrame && m_CommandVector[i].state == inputState::release)
+			{
+				m_CommandVector[i].wasButtonPressedLastFrame = false;
+				m_CommandVector[i].pCommand->Execute();
 			}
 		}
-		m_Controller2CommandVector.push_back(std::make_pair(cb, pCommand));
 	}
-	
-}
-
-void Fried::InputManager::AddCommand(SDL_Scancode sc, Command* pCommand)
-{
-	const size_t size{ m_KeyboardCommandVector.size() };
-	for (size_t i = 0; i < size; i++)
-	{
-		if (m_KeyboardCommandVector[i].first == sc)
-		{
-			std::cout << "controllerButton is already in use " << sc << std::endl;
-		}
-	}
-	m_KeyboardCommandVector.push_back(std::make_pair(sc, pCommand));
 }

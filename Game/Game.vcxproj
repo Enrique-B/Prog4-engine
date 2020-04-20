@@ -191,6 +191,7 @@ xcopy "$(SolutionDir)3rdParty\SDL2_mixer-2.0.2\lib\x64\SDL2_mixer.dll" "$(Output
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BaseState.cpp" />
     <ClCompile Include="BubleBobleScene.cpp" />
     <ClCompile Include="Command.cpp" />
     <ClCompile Include="DemoScene.cpp" />
@@ -203,6 +204,7 @@ xcopy "$(SolutionDir)3rdParty\SDL2_mixer-2.0.2\lib\x64\SDL2_mixer.dll" "$(Output
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BaseState.h" />
     <ClInclude Include="BubleBobleScene.h" />
     <ClInclude Include="Command.h" />
     <ClInclude Include="DemoScene.h" />
