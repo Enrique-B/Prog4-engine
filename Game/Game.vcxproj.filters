@@ -22,9 +22,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="FriedEngine.cpp" />
-    <ClCompile Include="BubleBobleScene.cpp">
-      <Filter>scenes</Filter>
-    </ClCompile>
     <ClCompile Include="Command.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -37,9 +34,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FriedEngine.h" />
-    <ClInclude Include="BubleBobleScene.h">
-      <Filter>scenes</Filter>
-    </ClInclude>
     <ClInclude Include="Command.h">
       <Filter>Header Files</Filter>
     </ClInclude>

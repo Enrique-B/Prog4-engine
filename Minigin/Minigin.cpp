@@ -79,6 +79,7 @@ void Fried::Minigin::Run()
 			doContinue = input->ProcessInput();
 			input->HandleInput();
 			sceneManager->Update(elapsedSec);
+			sceneManager->CollisionUpdate();
 			renderer->Render();
 			
 			// Get current time

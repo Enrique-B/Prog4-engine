@@ -2,7 +2,7 @@
 #include <vector>
 #include "BaseComponent.h"
 class BaseState;
-class StateComponent : public BaseComponent
+class StateComponent final : public BaseComponent
 {
 public: 
 	StateComponent();

@@ -7,9 +7,21 @@ void Fried::SceneManager::Update(float elapsedSec)
 	m_pScenes[m_CurrentScene]->Update(elapsedSec);
 }
 
+void Fried::SceneManager::CollisionUpdate()
+{
+	m_pScenes[m_CurrentScene]->CollisionUpdate();
+}
+
 void Fried::SceneManager::Render()
 {
 	m_pScenes[m_CurrentScene]->Render();
+	if (m_IsRenderingCollision)
+		m_pScenes[m_CurrentScene]->RenderCollision();
+}
+
+void Fried::SceneManager::SetIsRenderingCollision(bool isRenderingCollision)
+{
+	m_IsRenderingCollision = isRenderingCollision;
 }
 
 Fried::SceneManager::~SceneManager()

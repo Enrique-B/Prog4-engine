@@ -2,9 +2,7 @@
 #include "GameObject.h"
 #include "ResourceManager.h"
 #include "Renderer.h"
-#include "TransformComponent.h"
-#include "TextureComponent.h"
-#include "SpriteComponent.h"
+#include "Components.h"
 
 GameObject::GameObject()
 {
@@ -24,6 +22,15 @@ GameObject::~GameObject()
 void GameObject::Update(float elapsedSec)
 {
 	const size_t size{ m_pComponents.size() };
+	if (HasComponent(ComponentName::FPS) && HasComponent(ComponentName::Text))
+	{
+		TextComponent* pText = GetComponent<TextComponent>(ComponentName::Text);
+		FPSComponent* pFPS = GetComponent<FPSComponent>(ComponentName::FPS);
+		if (pFPS->DidFPSChange())
+		{
+			pText->SetText(std::to_string(pFPS->GetFPS()) + " FPS");
+		}
+	}
 	for (size_t i = 0; i < size; i++)
 	{
 		m_pComponents[i]->Update(elapsedSec);
@@ -40,6 +47,15 @@ void GameObject::Render() const
 	}
 }
 
+void GameObject::RenderCollision() const
+{
+	const size_t size{ m_pComponents.size() };
+	for (size_t i = 0; i < size; i++)
+	{
+		m_pComponents[i]->RenderCollision();
+	}
+}
+
 void GameObject::SetPosition(float x, float y)
 {
 	m_pTranform->SetPosition(x, y);
@@ -52,6 +68,7 @@ void GameObject::AddComponent(BaseComponent* pComponent)
 		if (pComponent->GetComponentName() != ComponentName::TransFrom)
 		{
 			m_pComponents.push_back(pComponent);
+			pComponent->SetGameObject(this);
 		}
 		else
 		{

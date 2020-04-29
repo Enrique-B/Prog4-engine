@@ -6,3 +6,4 @@
 #include "TextComponent.h"
 #include "TransformComponent.h"
 #include "TextureComponent.h"
+#include "ColliderComponent.h"

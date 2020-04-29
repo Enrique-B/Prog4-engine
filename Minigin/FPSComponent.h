@@ -1,7 +1,7 @@
 #pragma once
 #include "BaseComponent.h"
 class float2;
-class FPSComponent : public BaseComponent
+class FPSComponent final : public BaseComponent
 {
 public:
     FPSComponent();

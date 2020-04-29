@@ -10,8 +10,10 @@ namespace Fried
 		explicit Scene(const std::string& name);
 		void Add(GameObject* object);
 
-		virtual void Update(float elapsedSec);
-		virtual void Render() const;
+		void Update(float elapsedSec);
+		void CollisionUpdate();
+		void Render() const;
+		void RenderCollision()const;
 
 		virtual ~Scene();
 		Scene(const Scene& other) = delete;

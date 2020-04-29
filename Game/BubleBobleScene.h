@@ -7,7 +7,7 @@ namespace Fried
 class BubleBobleScene : public Fried::Scene
 {
 	BubleBobleScene(const std::vector<size_t>& bitMap);
-	virtual void Update(float elapsedSec) override;
+	//virtual void Update(float elapsedSec) override;
 	~BubleBobleScene() = default;
 	BubleBobleScene(const BubleBobleScene& other) = delete;
 	BubleBobleScene(BubleBobleScene&& other) = delete;

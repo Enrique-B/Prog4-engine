@@ -4,7 +4,7 @@
 #include <SDL_rect.h>
 
 struct SDL_Texture;
-class TextureComponent : public BaseComponent
+class TextureComponent final : public BaseComponent
 {
 public:
 	explicit TextureComponent(const std::string& textureName);

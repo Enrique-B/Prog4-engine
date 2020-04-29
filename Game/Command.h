@@ -25,70 +25,9 @@ public:
 	void Execute();
 };
 
-class SwapWeapon : public Command
-{
-public: 
-	SwapWeapon(GameObject* pObject);
-	void Execute();
-};
-
-class Crouch : public Command
+class DebugRenderCommand : public Command
 {
 public:
-	Crouch(GameObject* pObject);
-	void Execute();
-};
-
-class PlaceholderDPadUpCommand : public Command
-{
-public:
-	void Execute();
-};
-
-class PlaceholderDPadDownCommand : public Command
-{
-public:
-	void Execute();
-};
-
-class PlaceholderDPadRightCommand : public Command
-{
-public:
-	void Execute();
-};
-
-class PlaceholderDPadLeftCommand : public Command
-{
-public:
-	void Execute();
-};
-
-class PauseCommand : public Command
-{
-public: 
-	void Execute();
-};
-
-class PlaceHolderRightTrigger : public Command
-{
-public: 
-	void Execute();
-};
-
-class PlaceHolderLeftTrigger : public Command
-{
-public: 
-	void Execute();
-};
-
-class PlaceHolderRightBumper : public Command
-{
-public: 
-	void Execute();
-};
-
-class PlaceHolderLeftBumper : public Command
-{
-public:
+	DebugRenderCommand() : Command(nullptr) {};
 	void Execute();
 };
