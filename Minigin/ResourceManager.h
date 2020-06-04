@@ -10,10 +10,10 @@ namespace Fried
 	class ResourceManager final : public Singleton<ResourceManager>
 	{
 	public:
-		void Init(const std::string& data);
-		SDL_Texture* LoadTexture(const std::string& file);
+		void Init(const std::string& data)noexcept(false);
+		SDL_Texture* LoadTexture(const std::string& file)noexcept(false);
 
-		Font* LoadFont(const std::string& file, unsigned int size);
+		Font* LoadFont(const std::string& file, unsigned int size)noexcept;
 		~ResourceManager();
 	private:
 		friend class Singleton<ResourceManager>;

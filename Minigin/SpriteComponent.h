@@ -4,28 +4,31 @@
 struct SDL_Texture;
 class SpriteComponent final : public BaseComponent
 {
-	SpriteComponent(const int maxFrames, const  int framesPerSecond, const float frameWidht, const float frameHeight, const std::string& file);
+public:
+	SpriteComponent(const int maxFrames, const  int framesPerSecond, const float frameWidht, const float frameHeight, const std::string& file, int destHeight, int destWidth)noexcept(false);
 	SpriteComponent(const SpriteComponent& other) = delete;
 	SpriteComponent(SpriteComponent&& other) = delete;
 	SpriteComponent& operator=(const SpriteComponent& other) = delete;
 	SpriteComponent& operator=(SpriteComponent&& other) = delete;
 	virtual ~SpriteComponent() = default;
 
-	virtual void Update(float elapsedSec) ;
-	virtual void Render(const Fried::float2 & pos)const;
-	void SetDestRectHeight(float yCoordinate);
-	bool IsAnimationFinished()const { return m_IsAnimtionFinished; };
+	virtual void Update(float elapsedSec)noexcept;
+	virtual void Render(const Fried::float2 & pos)const noexcept;
+	void SetDestRectHeight(float yCoordinate)noexcept;
+	bool IsAnimationFinished()const noexcept { return m_IsAnimtionFinished; };
+	void SetIsGoingLeft(bool isGoingLeft)noexcept { m_IsGoingLeft = isGoingLeft; };
 
 private: 
 	const float m_FrameWidht; 
 	const float m_FrameHeight;
 	float m_AnimationTime;
+	const int m_DestWidth; 
+	const int m_DestHeight;
 	int m_MaxFrames;
 	int m_FramesPerSec;
 	int m_AnimationFrames;
-	int m_ImageWidth; 
-	int m_ImageHeight;
 	bool m_IsAnimtionFinished;
+	bool m_IsGoingLeft;
 	SDL_Texture* m_pTexture;
 	SDL_Rect m_ResourceRect;
 };

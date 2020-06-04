@@ -1,8 +1,10 @@
 #include "MiniginPCH.h"
 #include "StateComponent.h"
 #include "../Game/BaseState.h"
-StateComponent::StateComponent()
+StateComponent::StateComponent()noexcept
 	:BaseComponent()
+	, m_DidStatechange{false}
+	, m_CurrentState{nullptr}
 {
 	SetComponentName(ComponentName::state);
 }
@@ -14,7 +16,7 @@ void StateComponent::AddState(BaseState* pState)
 	{
 		if (strcmp(m_States[i]->GetName().c_str(),pState->GetName().c_str()) == 0) //http://www.cplusplus.com/reference/cstring/strcmp/
 		{
-			std::cout << "state was already in statecomponent";
+			throw std::runtime_error(std::string("StateComponent::AddState state was already in the GameObject\n"));
 			return;
 		}
 	}
@@ -28,6 +30,11 @@ void StateComponent::Update(float elapsedSec)
 
 void StateComponent::SetCurrentState(BaseState* pState)
 {
-	if (pState != nullptr && m_CurrentState != pState)
+#if _DEBUG
+	if (pState == nullptr)
+		throw std::runtime_error(std::string("StateComponent::SetCurrentState pState was a nullptr"));
+#endif // _DEBUG
+	m_DidStatechange = m_CurrentState != pState;
+	if (m_DidStatechange)
 		m_CurrentState = pState;
 }

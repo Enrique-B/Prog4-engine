@@ -10,15 +10,16 @@ namespace Fried
 	class Renderer final : public Singleton<Renderer>
 	{
 	public:
-		void Init(SDL_Window* window);
-		void Render() const;
-		void Destroy();
-		void RenderTexture(SDL_Texture* texture, SDL_Rect dest) const;
-		void RenderTexture(SDL_Texture* texture, float x, float y, int width, int height) const;
-		void RenderTexture(SDL_Texture* texture, SDL_Rect resource, SDL_Rect dest)const;
-		void RenderRect(const SDL_Rect& rect)const;
-		void RenderLine(const Fried::line& line)const;
-		SDL_Renderer* GetSDLRenderer() const { return m_Renderer; }
+		void Init(SDL_Window* window) noexcept(false);
+		void Render() const noexcept;
+		void Destroy()noexcept;
+		void RenderTexture(SDL_Texture* texture, const SDL_Rect& dest) const noexcept;
+		void RenderTexture(SDL_Texture* texture, float x, float y, int width, int height) const noexcept;
+		void RenderTexture(SDL_Texture* texture, const SDL_Rect& resource, const SDL_Rect& dest)const noexcept;
+		void RenderTexture(SDL_Texture* texture, const SDL_Rect& resource, const SDL_Rect& dest, double angle, const SDL_Point& center, bool flip)noexcept;
+		void RenderRect(const SDL_Rect& rect)const noexcept;
+		void RenderLine(const Fried::line& line)const noexcept;
+		SDL_Renderer* GetSDLRenderer() const noexcept { return m_Renderer; }
 	private:
 		SDL_Renderer* m_Renderer{};
 	};

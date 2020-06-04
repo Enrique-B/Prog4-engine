@@ -27,10 +27,8 @@ TextureComponent::~TextureComponent()
 {
 }
 
-void TextureComponent::Render(const Fried::float2& pos) const
+void TextureComponent::Render(const Fried::float2& pos) const noexcept
 {
-	if (m_pTexture == nullptr)
-		return;
 	SDL_Rect dstRect;
 	dstRect.x = static_cast<int>(pos.x);
 	dstRect.y = static_cast<int>(pos.y);

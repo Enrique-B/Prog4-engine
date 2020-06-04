@@ -7,21 +7,16 @@ void Fried::SceneManager::Update(float elapsedSec)
 	m_pScenes[m_CurrentScene]->Update(elapsedSec);
 }
 
-void Fried::SceneManager::CollisionUpdate()
+void Fried::SceneManager::CollisionUpdate()noexcept
 {
 	m_pScenes[m_CurrentScene]->CollisionUpdate();
 }
 
-void Fried::SceneManager::Render()
+void Fried::SceneManager::Render()noexcept
 {
 	m_pScenes[m_CurrentScene]->Render();
 	if (m_IsRenderingCollision)
 		m_pScenes[m_CurrentScene]->RenderCollision();
-}
-
-void Fried::SceneManager::SetIsRenderingCollision(bool isRenderingCollision)
-{
-	m_IsRenderingCollision = isRenderingCollision;
 }
 
 Fried::SceneManager::~SceneManager()
@@ -36,14 +31,39 @@ Fried::SceneManager::~SceneManager()
 void Fried::SceneManager::AddScene(Fried::Scene* pScene)
 {
 	if (pScene)
+	{
+#ifdef _DEBUG
+		if (std::find(m_pScenes.cbegin(), m_pScenes.cend(), pScene) != m_pScenes.cend())
+		{
+			throw std::runtime_error(std::string("SceneManager::AddScene scene was already in vector\n"));
+		}
+#endif 
 		m_pScenes.push_back(pScene);
+	}
 	else
-		throw("scene was a nullpoiter");
+		throw std::runtime_error(std::string("scene was a nullpoiter"));
 }
 
-void Fried::SceneManager::NextScene()
+void Fried::SceneManager::NextScene()noexcept
 {
 	m_CurrentScene++; 
 	if (m_CurrentScene > m_pScenes.size()-1)
 		m_CurrentScene = 0;
+#ifdef _DEBUG
+	std::cout << m_CurrentScene << std::endl;
+#endif // _DEBUG
+}
+
+Fried::Scene* Fried::SceneManager::GetNextScene()noexcept
+{
+	if (m_CurrentScene +1 > m_pScenes.size() - 1)
+		return nullptr;
+	return m_pScenes[m_CurrentScene + 1];
+}
+
+Fried::Scene* Fried::SceneManager::GetPreviousScene()noexcept
+{
+	if (m_CurrentScene - 1 < 0)
+		return nullptr;
+	return m_pScenes[m_CurrentScene - 1];
 }

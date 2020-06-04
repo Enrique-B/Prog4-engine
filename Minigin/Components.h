@@ -7,3 +7,4 @@
 #include "TransformComponent.h"
 #include "TextureComponent.h"
 #include "ColliderComponent.h"
+#include "EnemyComponent.h"

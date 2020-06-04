@@ -38,22 +38,22 @@ void DemoScene::Initialize()
 {
 	GameObject* pBackground{ new GameObject{} };
 	pBackground->AddComponent(new TextureComponent{ "background.jpg"});
-	Add(pBackground);
+	AddGameObject(pBackground);
 
 	GameObject* pLogo{ new GameObject{} };
 	pLogo->AddComponent(new TextureComponent{ "logo.png"});
 	pLogo->SetPosition(216, 180);
-	Add(pLogo);
+	AddGameObject(pLogo);
 
 	GameObject* pText = new GameObject{};
 	pText->AddComponent(new TextComponent("Programming 4 Assignment", "Lingua.otf", 36));
 	pText->SetPosition(80, 30);
-	Add(pText);
+	AddGameObject(pText);
 
 	m_pFPSObject =  new GameObject{ };
 	m_pFPSObject->AddComponent(new TextComponent{ "60 FPS", "Lingua.otf", 36 });
 	m_pFPSObject->AddComponent(new FPSComponent{});
-	Add(m_pFPSObject);
+	AddGameObject(m_pFPSObject);
 
 
 	//GameObject* pGameObject{ new GameObject{} };

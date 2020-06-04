@@ -12,7 +12,7 @@ void Fried::FriedEngine::LoadGame()
 	Fried::InputManager::GetInstance()->AddCommand(Input{ new ChangeSceneCommand{}, inputState::release, SDL_SCANCODE_F1, 0, ControllerButton::StartButton });
 	Fried::InputManager::GetInstance()->AddCommand(Input{ new DebugRenderCommand{}, inputState::release, SDL_SCANCODE_F2 });
 
-	BubleBobbleLevelDataReader pData{ "../Data/SeperatedLevelData.dat" };
+	BubleBobbleLevelDataReader pData{};
 	pData.Read();
 	std::vector<Fried::Scene*> pScenes{ pData.GetScenes()};
 	for (size_t i = 0; i < pScenes.size(); i++)

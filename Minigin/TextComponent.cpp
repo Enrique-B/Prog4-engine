@@ -10,7 +10,7 @@
 #include "Structs.h"
 #include "ResourceManager.h"
 
-TextComponent::TextComponent(const std::string& text, const std::string& fileName, unsigned int size)
+TextComponent::TextComponent(const std::string& text, const std::string& fileName, unsigned int size)noexcept
 	: BaseComponent()
 	, m_NeedsUpdate(true)
 	, m_Text(text)
@@ -27,7 +27,7 @@ TextComponent::~TextComponent()
 	SDL_DestroyTexture(m_pTexture);
 }
 
-void TextComponent::Update(float elapsedSec)
+void TextComponent::Update(float elapsedSec)noexcept(false)
 {
 	UNREFERENCED_PARAMETER(elapsedSec);
 	if (m_NeedsUpdate)
@@ -47,14 +47,14 @@ void TextComponent::Update(float elapsedSec)
 	}
 }
 
-void TextComponent::Render(const Fried::float2& pos) const
+void TextComponent::Render(const Fried::float2& pos) const noexcept
 {
 	if (m_pTexture != nullptr)
 		Fried::Renderer::GetInstance()->RenderTexture(m_pTexture, pos.x, pos.y,m_TextureWidth,m_TextureHeight);
 }
 
 // This implementation uses the "dirty flag" pattern
-void TextComponent::SetText(const std::string& text)
+void TextComponent::SetText(const std::string& text)noexcept
 {
 	if (m_Text != text)
 	{

@@ -43,9 +43,9 @@ struct Input
 	bool useKeyboard;
 	bool wasButtonPressedLastFrame; 
 	bool wasKeyPressedLastFrame;
-	Input(Command* pC, inputState st, SDL_Scancode scan, size_t cn, ControllerButton cb);
-	Input(Command* pC, inputState st, SDL_Scancode scan);
-	Input(Command* pC, inputState st, size_t cn, ControllerButton cb);
+	Input(Command* pCom, inputState inputState, SDL_Scancode scan, size_t controllerNum, ControllerButton controllerbut)noexcept(false);
+	Input(Command* pCom, inputState inputState, SDL_Scancode scan)noexcept(false);
+	Input(Command* pCom, inputState inputState, size_t controllerNum, ControllerButton controllerbut)noexcept(false);
 };
 
 namespace Fried
@@ -54,10 +54,10 @@ namespace Fried
 	{
 	public:
 		~InputManager();
-		bool ProcessInput();
-		bool IsControllerButtonPressed(const size_t controllerNumber ,ControllerButton button) const;
-		bool IsKeyboardButtonPressed(SDL_Scancode scancode)const;
-		void AddCommand(const Input& input);
+		bool ProcessInput()noexcept;
+		bool IsControllerButtonPressed(const size_t controllerNumber ,ControllerButton button) const noexcept;
+		bool IsKeyboardButtonPressed(SDL_Scancode scancode)const noexcept;
+		void AddCommand(const Input& input) noexcept(false);
 		void HandleInput();
 	private:
 		XINPUT_STATE m_CurrentState[MaxNumbersOfControllers];

@@ -7,14 +7,15 @@ struct SDL_Texture;
 class TextureComponent final : public BaseComponent
 {
 public:
-	explicit TextureComponent(const std::string& textureName);
-	TextureComponent(const std::string& textureName, SDL_Rect dstRect,SDL_Rect resourceRect);
+	explicit TextureComponent(const std::string& textureName)noexcept(false);
+	TextureComponent(const std::string& textureName, SDL_Rect dstRect,SDL_Rect resourceRect)noexcept(false);
 	~TextureComponent();
-	virtual void Render(const Fried::float2& pos)const;
 	TextureComponent(const TextureComponent&) = delete;
 	TextureComponent(TextureComponent&&) = delete;
 	TextureComponent& operator= (const TextureComponent&) = delete;
 	TextureComponent& operator= (const TextureComponent&&) = delete;
+
+	virtual void Render(const Fried::float2& pos)const noexcept;
 private:
 	SDL_Texture* m_pTexture;
 	Fried::int2 m_WidthHeight;

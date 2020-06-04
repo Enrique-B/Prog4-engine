@@ -1,8 +1,18 @@
 #pragma once
 #include <SDL_rect.h>
+
+enum class Collision
+{
+	None,
+	Left,
+	Right,
+	Up,
+	Down
+};
+
+
 namespace Fried
 {
-
 	struct float2
 	{
 		float2(float X, float Y) : x{ X }, y{ Y }{}
@@ -14,20 +24,50 @@ namespace Fried
 			y = f2.y;
 			return *this;
 		}
+		float2& operator+=(const float2& f2)
+		{
+			x += f2.x;
+			y += f2.y;
+			return *this;
+		}
+		//float2 operator-(const Fried::float2& f2)const
+		//{
+		//	float2 returnValue;
+		//	returnValue.x = x - f2.x;
+		//	returnValue.y = y - f2.y;
+		//	return returnValue;
+		//}
 		float cross(const float2& f2)const
 		{
-			return x * y - f2.x * f2.y;
+			return x * f2.y - y* f2.x;
 		}
 		float x;
 		float y;
+
 	};
 
 	struct HitInfo
 	{
-		float2 intersectPoint{};
+		std::vector<float2> intersectPoint{};
 		bool hit{ false };
+		std::vector <Collision> collision;
+		HitInfo& operator+=(const HitInfo& info);
 	};
 
+	inline HitInfo& HitInfo::operator+=(const HitInfo& info)
+	{
+		if (info.hit)
+		{
+			hit = info.hit;
+			size_t size{ info.collision.size() };
+			for (size_t i = 0; i < size; i++)
+			{
+				collision.push_back(info.collision[i]);
+				intersectPoint.push_back(info.intersectPoint[i]);
+			}
+		}
+		return *this;
+	}
 	struct int2
 	{
 		int2(int X, int Y) : x{ X }, y{ Y }{}
@@ -42,14 +82,13 @@ namespace Fried
 		int y;
 	};
 
-	//https://stackoverflow.com/questions/563198/how-do-you-detect-where-two-line-segments-intersect
 	struct line
 	{
 		line(const float2& point1, const float2& point2);
 		line(float px1, float py1, float px2, float py2);
 		float2 p1, p2;
-		HitInfo intersect(const line& collisionLine)const;
-		HitInfo intersect(const SDL_Rect& collisionLine)const;
+		void intersect(const line& collisionLine, const Collision& collision, HitInfo& hitinfo)const;
+		void intersect(const SDL_Rect& collisionLine,HitInfo& hitinfo)const;
 		void UpdateLine(const float2& point);
 		float2 differenceVec;
 	};
@@ -65,54 +104,39 @@ inline Fried::line::line(float px1, float py1, float px2, float py2)
 {
 }
 
-inline Fried::HitInfo Fried::line::intersect(const line& collisionLine)const
+inline void Fried::line::intersect(const line& collisionLine, const Collision& collision, HitInfo& hitinfo)const
 {
+	//https://stackoverflow.com/questions/563198/how-do-you-detect-where-two-line-segments-intersect
 	// in this example the p + r is going to be this line
 	// the q+s is going to be the collisionLine
-	HitInfo returnValue{};
 	const float2 difference(float2(p1.x - collisionLine.p1.x, p1.y - collisionLine.p1.y));
 	const float rxs{ collisionLine.differenceVec.cross(differenceVec) };
 	const float sxr{ differenceVec.cross(collisionLine.differenceVec) };
 	const float t = difference.cross(collisionLine.differenceVec) / sxr;
 	const float u = difference.cross(differenceVec) / rxs;
-
 	if (rxs != 0 && (0 <= t && t <= 1) && (0 <= u && u <= 1) )
 	{
-		returnValue.hit = true;
-		returnValue.intersectPoint = float2(p1.x + t * difference.x, p1.y + t * difference.y);
+		hitinfo.hit = true;
+		hitinfo.intersectPoint.push_back(float2(p1.x + t * collisionLine.differenceVec.x, p1.y + t * collisionLine.differenceVec.y));
+		hitinfo.collision.push_back(collision);
 	}
-	else
-	{
-		returnValue.hit = false;
-	}
-	return returnValue;
 }
 
-inline Fried::HitInfo Fried::line::intersect(const SDL_Rect& collisionRect) const
+inline void Fried::line::intersect(const SDL_Rect& collisionRect, HitInfo& hitinfo) const
 {
-	HitInfo returnValue;
 	const float x{static_cast<float>(collisionRect.x)};
 	const float y{ static_cast<float>(collisionRect.y) };
 	const float xw{ static_cast<float>(collisionRect.x + collisionRect.w)};
 	const float yh{ static_cast<float>(collisionRect.y + collisionRect.h) };
-	const line bottom{ x, y, xw, y };
+	const line top{ x, y, xw, y };
+	const line bottom{ x, yh, xw, yh };
 	const line right{ xw, y, xw , yh };
-	const line top{ x, yh, xw, yh };
 	const line left{ x, y, x, yh };
-	returnValue = intersect(bottom);
-	if (returnValue.hit)
-		return returnValue;
-	returnValue = intersect(top);
-	if (returnValue.hit)
-		return returnValue;
-	returnValue = intersect(right);
-	if (returnValue.hit)
-		return returnValue;
-	returnValue = intersect(left);
-	if (returnValue.hit)
-		return returnValue;
-	returnValue.hit = false;
-	return returnValue;
+
+	intersect(bottom, Collision::Down, hitinfo);
+	intersect(top, Collision::Up, hitinfo);
+	intersect(right, Collision::Right, hitinfo);
+	intersect(left, Collision::Left, hitinfo);
 }
 
 inline void Fried::line::UpdateLine(const float2& point)

@@ -1,17 +1,17 @@
 #include "MiniginPCH.h"
 #include "Minigin.h"
-#include <chrono>
-#include <thread>
 #include "InputManager.h"
 #include "SceneManager.h"
 #include "Renderer.h"
 #include "ResourceManager.h"
-#include <SDL.h>
-
 #include "TextComponent.h"
 #include "GameObject.h"
 #include "Scene.h"
 
+#include <chrono>
+#include <thread>
+#include <SDL.h>
+#include <future>
 
 using namespace std;
 using namespace std::chrono;
@@ -22,8 +22,8 @@ void Fried::Minigin::Initialize()
 	{
 		throw std::runtime_error(std::string("SDL_Init Error: ") + SDL_GetError());
 	}
-	const int windowWidth{ 32 * 24 };
-	const int windowHeight{ 25 * 24 };
+	const int windowWidth{ 32 * 24 + 100};
+	const int windowHeight{ 25 * 24 + 40};
 
 	m_Window = SDL_CreateWindow(
 		"Programming 4 assignment",
@@ -72,6 +72,7 @@ void Fried::Minigin::Run()
 		float elapsedSec{};
 
 		bool doContinue = true;
+		std::future<void> collisionThread;
 		while (doContinue)
 		{
 			std::chrono::steady_clock::time_point t1 = std::chrono::steady_clock::now();
@@ -80,8 +81,8 @@ void Fried::Minigin::Run()
 			input->HandleInput();
 			sceneManager->Update(elapsedSec);
 			sceneManager->CollisionUpdate();
+			// render
 			renderer->Render();
-			
 			// Get current time
 			std::chrono::steady_clock::time_point t2 = std::chrono::steady_clock::now();
 			// Calculate elapsed time
@@ -90,6 +91,5 @@ void Fried::Minigin::Run()
 			t1 = t2;
 		}
 	}
-
 	Cleanup();
 }

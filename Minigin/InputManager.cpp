@@ -4,39 +4,39 @@
 #include <SDL.h>
 #include <ostream>
 
-Input::Input(Command* pC, inputState st, SDL_Scancode scan, size_t cn, ControllerButton cb)
+Input::Input(Command* pCom, inputState inputState, SDL_Scancode scan, size_t controllerNum, ControllerButton controllerbut)
 {
 	if (pCommand == nullptr)
 	{
-		std::runtime_error(std::string("pCommand was nullptr"));
+		throw std::runtime_error(std::string("pCommand was nullptr"));
 	}
-	pCommand = pC;
-	state = st;
+	pCommand = pCom;
+	state = inputState;
 	keyboardKey = scan;
 	useKeyboard = true;
-	if (cn < MaxNumbersOfControllers)
+	if (controllerNum < MaxNumbersOfControllers)
 	{
 		useController = true;
-		controllerNumber = cn;
-		button = cb;
+		controllerNumber = controllerNum;
+		button = controllerbut;
 	}
 	else
 	{
 		useController = false;
 		controllerNumber = 3;
-		button = cb;
+		button = controllerbut;
 	}
 	wasButtonPressedLastFrame = false;
 	wasKeyPressedLastFrame = false;
 }
-Input::Input(Command* pC, inputState st, SDL_Scancode scan)
+Input::Input(Command* pCom, inputState inputState, SDL_Scancode scan)
 {
 	if (pCommand == nullptr)
 	{
-		std::runtime_error(std::string("pCommand was nullptr"));
+		throw std::runtime_error(std::string("pCommand was nullptr"));
 	}
-	pCommand = pC;
-	state = st;
+	pCommand = pCom;
+	state = inputState;
 	keyboardKey = scan;
 	useKeyboard = true;
 	useController = false;
@@ -46,29 +46,30 @@ Input::Input(Command* pC, inputState st, SDL_Scancode scan)
 	wasKeyPressedLastFrame = false;
 }
 
-Input::Input(Command* pC, inputState st, size_t cn, ControllerButton cb)
+Input::Input(Command* pCom, inputState inputState, size_t controllerNum, ControllerButton controllerbut)
 {
 	if (pCommand == nullptr)
 	{
-		std::runtime_error(std::string("pCommand was nullptr"));
+		throw std::runtime_error(std::string("pCommand was nullptr"));
 	}
-	pCommand = pC;
-	state = st;
+	pCommand = pCom;
+	state = inputState;
 	useKeyboard = false;
-	if (cn < MaxNumbersOfControllers)
+	if (controllerNum < MaxNumbersOfControllers)
 	{
 		useController = true;
-		controllerNumber = cn;
-		button = cb;
+		controllerNumber = controllerNum;
+		button = controllerbut;
 	}
 	else
 	{
 		useController = false;
 		controllerNumber = 3;
-		button = cb;
+		button = controllerbut;
 	}
 	wasButtonPressedLastFrame = false;
 	wasKeyPressedLastFrame = false;
+	keyboardKey = SDL_Scancode(-1);
 }
 
 // just a debug thingy 
@@ -128,7 +129,7 @@ Fried::InputManager::~InputManager()
 		SafeDelete(m_CommandVector[i].pCommand);
 }
 
-bool Fried::InputManager::ProcessInput()
+bool Fried::InputManager::ProcessInput()noexcept
 {
 	ZeroMemory(&m_CurrentState, sizeof(XINPUT_STATE));
 	for (size_t i = 0; i < MaxNumbersOfControllers; i++)
@@ -142,7 +143,7 @@ bool Fried::InputManager::ProcessInput()
 	return true;
 }
 
-bool Fried::InputManager::IsControllerButtonPressed(size_t controllerNumber, ControllerButton button) const
+bool Fried::InputManager::IsControllerButtonPressed(size_t controllerNumber, ControllerButton button) const noexcept
 {
 	switch (button)
 	{
@@ -163,7 +164,7 @@ bool Fried::InputManager::IsControllerButtonPressed(size_t controllerNumber, Con
 	}
 }
 
-bool Fried::InputManager::IsKeyboardButtonPressed(SDL_Scancode scancode) const
+bool Fried::InputManager::IsKeyboardButtonPressed(SDL_Scancode scancode) const noexcept
 {
 	const Uint8* keyboardState = SDL_GetKeyboardState(NULL);
 	return keyboardState[scancode];
@@ -173,7 +174,7 @@ void Fried::InputManager::AddCommand(const Input& input)
 {
 	if (!input.useController && !input.useKeyboard)
 	{
-		std::runtime_error(std::string("input useController and keyboard was false"));
+		throw std::runtime_error(std::string("input useController and keyboard was false"));
 	}
 	m_CommandVector.push_back(input);
 }

@@ -5,9 +5,12 @@
 #include "Components.h"
 
 GameObject::GameObject()
+	:m_IsActive{true}
+	,m_pScene{nullptr}
 {
 	m_pTranform = new TransformComponent{};
 	m_pComponents.push_back(m_pTranform);
+	m_pTranform->SetGameObject(this);
 }
 
 GameObject::~GameObject()
@@ -21,24 +24,19 @@ GameObject::~GameObject()
 
 void GameObject::Update(float elapsedSec)
 {
+	if (!m_IsActive)
+		return;
 	const size_t size{ m_pComponents.size() };
-	if (HasComponent(ComponentName::FPS) && HasComponent(ComponentName::Text))
-	{
-		TextComponent* pText = GetComponent<TextComponent>(ComponentName::Text);
-		FPSComponent* pFPS = GetComponent<FPSComponent>(ComponentName::FPS);
-		if (pFPS->DidFPSChange())
-		{
-			pText->SetText(std::to_string(pFPS->GetFPS()) + " FPS");
-		}
-	}
 	for (size_t i = 0; i < size; i++)
 	{
 		m_pComponents[i]->Update(elapsedSec);
 	}
 }
 
-void GameObject::Render() const
+void GameObject::Render() const noexcept
 {
+	if (!m_IsActive)
+		return;
 	const Fried::float2 pos = m_pTranform->GetPosition();
 	const size_t size{ m_pComponents.size() };
 	for (size_t i = 0; i < size; i++)
@@ -47,8 +45,10 @@ void GameObject::Render() const
 	}
 }
 
-void GameObject::RenderCollision() const
+void GameObject::RenderCollision() const noexcept
 {
+	if (!m_IsActive)
+		return;
 	const size_t size{ m_pComponents.size() };
 	for (size_t i = 0; i < size; i++)
 	{
@@ -56,7 +56,7 @@ void GameObject::RenderCollision() const
 	}
 }
 
-void GameObject::SetPosition(float x, float y)
+void GameObject::SetPosition(float x, float y)noexcept
 {
 	m_pTranform->SetPosition(x, y);
 }
@@ -72,12 +72,12 @@ void GameObject::AddComponent(BaseComponent* pComponent)
 		}
 		else
 		{
-			std::cout << "there can only be one TransformComponent per GameObject" << std::endl;
+			throw std::runtime_error(std::string("there can only be one TransformComponent per GameObject\n"));
 		}
 	}
 }
 
-bool GameObject::HasComponent(ComponentName name) const
+bool GameObject::HasComponent(ComponentName name) const noexcept
 {
 	for (auto component : m_pComponents)
 	{
@@ -87,4 +87,21 @@ bool GameObject::HasComponent(ComponentName name) const
 		}
 	}
 	return false;
+}
+
+void GameObject::SetIsActive(bool isActive)
+{
+	if (isActive != m_IsActive)
+	{
+		m_IsActive = m_IsActive; 
+	}
+}
+
+void GameObject::Initialize()noexcept(false)
+{
+	const size_t size{m_pComponents.size()};
+	for (size_t i = 0; i < size; i++)
+	{
+		m_pComponents[i]->Initialize();
+	}
 }

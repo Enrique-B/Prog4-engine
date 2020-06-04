@@ -4,22 +4,25 @@
 #include "Renderer.h"
 #include <SDL.h>
 
-SpriteComponent::SpriteComponent(int maxFrames, int framesPerSecond, float frameWidht, float frameHeight, const std::string& file)
+SpriteComponent::SpriteComponent(int maxFrames, int framesPerSecond, float frameWidht, float frameHeight, const std::string& file, int destHeight, int destWidth)
 	:m_FrameWidht{frameWidht}
 	,m_FrameHeight{frameHeight}
 	,m_AnimationTime{ 0 }
 	,m_MaxFrames{maxFrames}
 	,m_FramesPerSec{framesPerSecond}
 	, m_AnimationFrames{ 0 }
+	, m_DestWidth{ destWidth }
+	, m_DestHeight{ destHeight }
 	,m_IsAnimtionFinished{false}
 	,m_pTexture{Fried::ResourceManager::GetInstance()->LoadTexture(file)}
 	, m_ResourceRect{0,0,int(frameWidht), int(frameHeight)}
+	, m_IsGoingLeft{true}
 {
-	SDL_QueryTexture(m_pTexture, nullptr, nullptr, &m_ImageWidth, &m_ImageHeight);
+	SDL_QueryTexture(m_pTexture, nullptr, nullptr, nullptr, nullptr);
 	SetComponentName(ComponentName::Sprite);
 }
 
-void SpriteComponent::Update(float elapsedSec)
+void SpriteComponent::Update(float elapsedSec)noexcept
 {
 	// updating the animation 
 	m_IsAnimtionFinished = false;
@@ -42,19 +45,21 @@ void SpriteComponent::Update(float elapsedSec)
 		m_IsAnimtionFinished = true;
 		m_ResourceRect.x = static_cast<int>(m_AnimationFrames * m_FrameWidht);
 	}
+
 }
 
-void SpriteComponent::Render(const Fried::float2& pos) const
+void SpriteComponent::Render(const Fried::float2& pos) const noexcept
 {
 	SDL_Rect DestRect{};
 	DestRect.x = static_cast<int>(pos.x);
 	DestRect.y = static_cast<int>(pos.y);
-	DestRect.w = m_ImageWidth;
-	DestRect.h = m_ImageHeight;
-	Fried::Renderer::GetInstance()->RenderTexture(m_pTexture, m_ResourceRect, DestRect);
+	DestRect.w = m_DestWidth;
+	DestRect.h = m_DestHeight;
+	Fried::Renderer::GetInstance()->RenderTexture(m_pTexture, m_ResourceRect, DestRect, 0, SDL_Point{}, m_IsGoingLeft);
 }
 
-void SpriteComponent::SetDestRectHeight(float yCoordinate)
+void SpriteComponent::SetDestRectHeight(float yCoordinate)noexcept
 {
 	m_ResourceRect.y = static_cast<int>(yCoordinate);
 }
+

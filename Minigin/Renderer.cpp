@@ -13,7 +13,7 @@ void Fried::Renderer::Init(SDL_Window * window)
 	}
 }
 
-void Fried::Renderer::Render() const
+void Fried::Renderer::Render() const noexcept
 {
 	const Uint8 r{ 0 }, g{ 0 }, b{ 0 }, a{ 0 };
 	SDL_SetRenderDrawColor(m_Renderer, r, g, b, a);
@@ -22,7 +22,7 @@ void Fried::Renderer::Render() const
 	SDL_RenderPresent(m_Renderer);
 }
 
-void Fried::Renderer::Destroy()
+void Fried::Renderer::Destroy()noexcept
 {
 	if (m_Renderer != nullptr)
 	{
@@ -31,12 +31,12 @@ void Fried::Renderer::Destroy()
 	}
 }
 
-void Fried::Renderer::RenderTexture(SDL_Texture* texture, SDL_Rect dest) const
+void Fried::Renderer::RenderTexture(SDL_Texture* texture, const SDL_Rect& dest) const noexcept
 {
 	SDL_RenderCopy(m_Renderer, texture, nullptr, &dest);
 }
 
-void Fried::Renderer::RenderTexture(SDL_Texture* texture, const float x, const float y, const int width, const int height) const
+void Fried::Renderer::RenderTexture(SDL_Texture* texture, const float x, const float y, const int width, const int height) const noexcept
 {
 	SDL_Rect dst;
 	dst.x = static_cast<int>(x);
@@ -46,19 +46,24 @@ void Fried::Renderer::RenderTexture(SDL_Texture* texture, const float x, const f
 	SDL_RenderCopy(m_Renderer, texture, nullptr, &dst);
 }
 
-void Fried::Renderer::RenderTexture(SDL_Texture* texture, SDL_Rect resource, SDL_Rect dest) const
+void Fried::Renderer::RenderTexture(SDL_Texture* texture, const SDL_Rect& resource, const SDL_Rect& dest) const noexcept
 {
 	SDL_RenderCopy(m_Renderer, texture, &resource, &dest);
 }
 
-void Fried::Renderer::RenderRect(const SDL_Rect& rect)const
+void Fried::Renderer::RenderTexture(SDL_Texture* texture, const SDL_Rect& resource, const SDL_Rect& dest, double angle, const SDL_Point& center, bool flip) noexcept
+{
+	SDL_RenderCopyEx(m_Renderer, texture, &resource, &dest, angle, &center, flip ? SDL_RendererFlip::SDL_FLIP_HORIZONTAL : SDL_RendererFlip::SDL_FLIP_NONE);
+}
+
+void Fried::Renderer::RenderRect(const SDL_Rect& rect)const noexcept
 {
 	const Uint8 r{ 255 }, g{ 105 }, b{ 180 }, a{ 255 };
 	SDL_SetRenderDrawColor(m_Renderer, r, g, b, a);
 	SDL_RenderDrawRect(m_Renderer, &rect);
 }
 
-void Fried::Renderer::RenderLine(const Fried::line& line) const
+void Fried::Renderer::RenderLine(const Fried::line& line) const noexcept
 {
 	SDL_RenderDrawLine(m_Renderer, static_cast<int>(line.p1.x), static_cast<int>(line.p1.y),
 		static_cast<int>(line.p2.x), static_cast<int>(line.p2.y));

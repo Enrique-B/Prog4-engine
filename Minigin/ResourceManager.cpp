@@ -63,7 +63,7 @@ SDL_Texture* Fried::ResourceManager::LoadTexture(const std::string& file)
 	return m_pTextureMap[fullPath];
 }
 
-Font* Fried::ResourceManager::LoadFont(const std::string& file, unsigned int size)
+Font* Fried::ResourceManager::LoadFont(const std::string& file, unsigned int size)noexcept
 {
 	std::string fullPath = m_DataPath + file;
 	std::pair<std::string, unsigned int>pair{ fullPath, size };

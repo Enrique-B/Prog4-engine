@@ -5,17 +5,17 @@ class Font;
 class TextComponent final : public BaseComponent
 {
 public:
-	virtual void Update(float elapsedSec);
-	virtual void Render(const Fried::float2& pos) const;
-
-	void SetText(const std::string& text);
-
-	explicit TextComponent(const std::string& text, const std::string& fileName, unsigned int size);
+	explicit TextComponent(const std::string& text, const std::string& fileName, unsigned int size)noexcept;
 	virtual  ~TextComponent();
 	TextComponent(const TextComponent& other) = delete;
 	TextComponent(TextComponent&& other) = delete;
 	TextComponent& operator=(const TextComponent& other) = delete;
 	TextComponent& operator=(TextComponent&& other) = delete;
+
+	virtual void Update(float elapsedSec)noexcept(false);
+	virtual void Render(const Fried::float2& pos) const noexcept;
+	void SetText(const std::string& text)noexcept;
+
 private:
 	bool m_NeedsUpdate;
 	std::string m_Text;
