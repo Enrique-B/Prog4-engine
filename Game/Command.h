@@ -18,6 +18,34 @@ public:
 	void Execute();
 };
 
+class MoveLeftCommand : public Command
+{
+public:
+	MoveLeftCommand(GameObject* pObject);
+	void Execute();
+};
+
+class ReleaseMovementCommand : public Command
+{
+public:
+	ReleaseMovementCommand(GameObject* pObject);
+	void Execute();
+};
+
+class MoveRightCommand : public Command
+{
+public:
+	MoveRightCommand(GameObject* pObject);
+	void Execute();
+};
+
+class ShootBubbleCommand : public Command
+{
+public:
+	ShootBubbleCommand(GameObject* pObject);
+	void Execute();
+};
+
 class ChangeSceneCommand : public Command
 {
 public: 

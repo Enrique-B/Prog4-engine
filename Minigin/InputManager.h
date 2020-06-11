@@ -29,7 +29,8 @@ enum class ControllerButton
 enum class inputState
 {
 	release = 0, 
-	pressed = 1
+	pressed = 1,
+	down = 2
 };
 
 struct Input
@@ -62,5 +63,6 @@ namespace Fried
 	private:
 		XINPUT_STATE m_CurrentState[MaxNumbersOfControllers];
 		std::vector<Input> m_CommandVector;
+		const Uint8* keyboardState;
 	};
 }

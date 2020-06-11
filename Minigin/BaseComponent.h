@@ -14,7 +14,9 @@ enum class ComponentName
 	Sprite = 5,
 	state = 6,
 	collider = 7,
-	enemy = 8
+	enemy = 8,
+	bubble,
+	Character
 };
 class GameObject;
 class BaseComponent
@@ -31,7 +33,7 @@ public:
 	virtual void RenderCollision()const noexcept {};
 	ComponentName GetComponentName()const noexcept { return m_ComponentName; };
 	void SetGameObject(GameObject* pObject)noexcept { m_pGameObject = pObject; };
-	GameObject* GetGameObject()const noexcept { return m_pGameObject; };
+	inline GameObject* GetGameObject()const noexcept { return m_pGameObject; };
 	virtual void Initialize() {};
 protected: 
 	void SetComponentName(ComponentName name)noexcept { m_ComponentName = name; };

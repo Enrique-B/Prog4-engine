@@ -6,7 +6,7 @@
 
 Input::Input(Command* pCom, inputState inputState, SDL_Scancode scan, size_t controllerNum, ControllerButton controllerbut)
 {
-	if (pCommand == nullptr)
+	if (pCom == nullptr)
 	{
 		throw std::runtime_error(std::string("pCommand was nullptr"));
 	}
@@ -31,7 +31,7 @@ Input::Input(Command* pCom, inputState inputState, SDL_Scancode scan, size_t con
 }
 Input::Input(Command* pCom, inputState inputState, SDL_Scancode scan)
 {
-	if (pCommand == nullptr)
+	if (pCom == nullptr)
 	{
 		throw std::runtime_error(std::string("pCommand was nullptr"));
 	}
@@ -48,7 +48,7 @@ Input::Input(Command* pCom, inputState inputState, SDL_Scancode scan)
 
 Input::Input(Command* pCom, inputState inputState, size_t controllerNum, ControllerButton controllerbut)
 {
-	if (pCommand == nullptr)
+	if (pCom == nullptr)
 	{
 		throw std::runtime_error(std::string("pCommand was nullptr"));
 	}
@@ -135,6 +135,7 @@ bool Fried::InputManager::ProcessInput()noexcept
 	for (size_t i = 0; i < MaxNumbersOfControllers; i++)
 		XInputGetState(0, &m_CurrentState[i]);
 	SDL_Event e{};
+	keyboardState = SDL_GetKeyboardState(NULL);
 	while (SDL_PollEvent(&e))
 	{
 		if (e.type == SDL_QUIT)
@@ -166,7 +167,6 @@ bool Fried::InputManager::IsControllerButtonPressed(size_t controllerNumber, Con
 
 bool Fried::InputManager::IsKeyboardButtonPressed(SDL_Scancode scancode) const noexcept
 {
-	const Uint8* keyboardState = SDL_GetKeyboardState(NULL);
 	return keyboardState[scancode];
 }
 
@@ -181,7 +181,6 @@ void Fried::InputManager::AddCommand(const Input& input)
 
 void Fried::InputManager::HandleInput()
 {
-	ProcessInput();
 	const size_t size{m_CommandVector.size()};
 	for (size_t i = 0; i < size; i++)
 	{
@@ -189,32 +188,49 @@ void Fried::InputManager::HandleInput()
 		{
 			if (IsKeyboardButtonPressed(m_CommandVector[i].keyboardKey))
 			{
-				m_CommandVector[i].wasKeyPressedLastFrame = true;
-				if (m_CommandVector[i].state == inputState::pressed)
+				if (m_CommandVector[i].state == inputState::pressed && m_CommandVector[i].wasKeyPressedLastFrame == false)
 				{
 					m_CommandVector[i].pCommand->Execute();
 				}
+				else if (m_CommandVector[i].state == inputState::down)
+				{
+					m_CommandVector[i].pCommand->Execute();
+				}
+				m_CommandVector[i].wasKeyPressedLastFrame = true;
 			}
 			else if (m_CommandVector[i].wasKeyPressedLastFrame && m_CommandVector[i].state == inputState::release)
 			{
 				m_CommandVector[i].wasKeyPressedLastFrame = false; 
 				m_CommandVector[i].pCommand->Execute();
 			}
+			else
+			{
+				m_CommandVector[i].wasKeyPressedLastFrame = false;
+			}
 		}
 		if (m_CommandVector[i].useController)
 		{
 			if (IsControllerButtonPressed(m_CommandVector[i].controllerNumber, m_CommandVector[i].button))
 			{
-				m_CommandVector[i].wasButtonPressedLastFrame = true;
-				if (m_CommandVector[i].state == inputState::pressed)
+				if (m_CommandVector[i].state == inputState::pressed && m_CommandVector[i].wasButtonPressedLastFrame == false)
 				{
 					m_CommandVector[i].pCommand->Execute();
 				}
+				else if (m_CommandVector[i].state == inputState::down)
+				{
+					m_CommandVector[i].pCommand->Execute();
+				}
+				m_CommandVector[i].wasButtonPressedLastFrame = true;
+
 			}
 			else if (m_CommandVector[i].wasButtonPressedLastFrame && m_CommandVector[i].state == inputState::release)
 			{
 				m_CommandVector[i].wasButtonPressedLastFrame = false;
 				m_CommandVector[i].pCommand->Execute();
+			}
+			else
+			{
+				m_CommandVector[i].wasButtonPressedLastFrame = false;
 			}
 		}
 	}

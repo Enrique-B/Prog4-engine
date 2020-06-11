@@ -1,15 +1,11 @@
 #pragma once
 #include <SDL_rect.h>
+#include <vector>
 
-enum class Collision
+inline bool AreFloatsEqual(float f1, float f2, float epilison = 0.00001)
 {
-	None,
-	Left,
-	Right,
-	Up,
-	Down
-};
-
+	return (abs(f1 - f2) <epilison );
+}
 
 namespace Fried
 {
@@ -43,14 +39,12 @@ namespace Fried
 		}
 		float x;
 		float y;
-
 	};
 
 	struct HitInfo
 	{
 		std::vector<float2> intersectPoint{};
 		bool hit{ false };
-		std::vector <Collision> collision;
 		HitInfo& operator+=(const HitInfo& info);
 	};
 
@@ -59,10 +53,9 @@ namespace Fried
 		if (info.hit)
 		{
 			hit = info.hit;
-			size_t size{ info.collision.size() };
+			size_t size{ info.intersectPoint.size() };
 			for (size_t i = 0; i < size; i++)
 			{
-				collision.push_back(info.collision[i]);
 				intersectPoint.push_back(info.intersectPoint[i]);
 			}
 		}
@@ -87,7 +80,7 @@ namespace Fried
 		line(const float2& point1, const float2& point2);
 		line(float px1, float py1, float px2, float py2);
 		float2 p1, p2;
-		void intersect(const line& collisionLine, const Collision& collision, HitInfo& hitinfo)const;
+		void intersect(const line& collisionLine, HitInfo& hitinfo)const;
 		void intersect(const SDL_Rect& collisionLine,HitInfo& hitinfo)const;
 		void UpdateLine(const float2& point);
 		float2 differenceVec;
@@ -104,21 +97,26 @@ inline Fried::line::line(float px1, float py1, float px2, float py2)
 {
 }
 
-inline void Fried::line::intersect(const line& collisionLine, const Collision& collision, HitInfo& hitinfo)const
+inline void Fried::line::intersect(const line& collisionLine, HitInfo& hitinfo)const
 {
 	//https://stackoverflow.com/questions/563198/how-do-you-detect-where-two-line-segments-intersect
 	// in this example the p + r is going to be this line
-	// the q+s is going to be the collisionLine
-	const float2 difference(float2(p1.x - collisionLine.p1.x, p1.y - collisionLine.p1.y));
-	const float rxs{ collisionLine.differenceVec.cross(differenceVec) };
-	const float sxr{ differenceVec.cross(collisionLine.differenceVec) };
-	const float t = difference.cross(collisionLine.differenceVec) / sxr;
-	const float u = difference.cross(differenceVec) / rxs;
-	if (rxs != 0 && (0 <= t && t <= 1) && (0 <= u && u <= 1) )
+	// the q + s is going to be the collisionLine
+	const float2 p{ p1 };
+	const float2 r{ differenceVec }; 
+	const float2 q{ collisionLine.p1 };
+	const float2 s{ collisionLine.differenceVec };
+	const float2 differenceQP{q.x - p.x, q.y - p.y};
+	const float rXs{ r.cross(s) };
+	const float t = differenceQP.cross(s) / rXs;
+	const float u = differenceQP.cross(r) / rXs;
+	// checking if it's coliniar == on 1 line 
+	
+
+	if (rXs != 0 && (0 <= t && t <= 1) && (0 <= u && u <= 1))
 	{
 		hitinfo.hit = true;
-		hitinfo.intersectPoint.push_back(float2(p1.x + t * collisionLine.differenceVec.x, p1.y + t * collisionLine.differenceVec.y));
-		hitinfo.collision.push_back(collision);
+		hitinfo.intersectPoint.push_back(float2(p.x + t * r.x, p.y + t * r.y));
 	}
 }
 
@@ -133,14 +131,19 @@ inline void Fried::line::intersect(const SDL_Rect& collisionRect, HitInfo& hitin
 	const line right{ xw, y, xw , yh };
 	const line left{ x, y, x, yh };
 
-	intersect(bottom, Collision::Down, hitinfo);
-	intersect(top, Collision::Up, hitinfo);
-	intersect(right, Collision::Right, hitinfo);
-	intersect(left, Collision::Left, hitinfo);
+	intersect(bottom, hitinfo);
+	intersect(top, hitinfo);
+	intersect(right, hitinfo);
+	intersect(left, hitinfo);
 }
 
 inline void Fried::line::UpdateLine(const float2& point)
 {
 	p1 = point;
 	p2 = float2(p1.x + differenceVec.x, p1.y + differenceVec.y);
+}
+
+inline int randUINT(int min, int max)
+{
+	return rand() % (max - min + 1) + min;
 }

@@ -22,12 +22,12 @@ public:
 	void RenderCollision()const noexcept;
 	void SetPosition(float x, float y) noexcept;
 	void AddComponent(BaseComponent* pComponent)noexcept(false);
-	TransformComponent* GetTransform()const noexcept { return m_pTranform; };
+	inline TransformComponent* GetTransform()const noexcept { return m_pTranform; };
 	bool HasComponent(ComponentName name)const noexcept;
 	template <class T>
-	T* GetComponent(ComponentName name) noexcept // giving the name for checks because i don't want to check typeId's
+	inline T* GetComponent(ComponentName name) noexcept // giving the name for checks because i don't want to check typeId's
 	{
-		for (auto component : m_pComponents)
+		for (const auto & component : m_pComponents)
 		{
 			if (component->GetComponentName() == name)
 				return static_cast<T*>(component);
@@ -35,10 +35,10 @@ public:
 		return nullptr;
 	}
 	template <class T>
-	std::vector<T*> GetComponents(ComponentName name)noexcept // giving the name for checks because i don't want to check typeId's
+	inline std::vector<T*> GetComponents(ComponentName name)noexcept // giving the name for checks because i don't want to check typeId's
 	{
 		std::vector<T*> returnValue;
-		for (auto component : m_pComponents)
+		for (const auto& component : m_pComponents)
 		{
 			if (component->GetComponentName() == name)
 				returnValue.push_back(static_cast<T*>(component));

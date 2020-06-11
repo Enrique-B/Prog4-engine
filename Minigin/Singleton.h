@@ -13,7 +13,6 @@ namespace Fried
 			}
 			return m_pInstance;
 		}
-
 		virtual ~Singleton() = default;
 		Singleton(const Singleton& other) = delete;
 		Singleton(Singleton&& other) = delete;

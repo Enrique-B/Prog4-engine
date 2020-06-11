@@ -24,6 +24,10 @@ SpriteComponent::SpriteComponent(int maxFrames, int framesPerSecond, float frame
 
 void SpriteComponent::Update(float elapsedSec)noexcept
 {
+	if (!m_IsUpUpdating)
+	{
+		return;
+	}
 	// updating the animation 
 	m_IsAnimtionFinished = false;
 	m_AnimationTime += elapsedSec;
@@ -61,5 +65,20 @@ void SpriteComponent::Render(const Fried::float2& pos) const noexcept
 void SpriteComponent::SetDestRectHeight(float yCoordinate)noexcept
 {
 	m_ResourceRect.y = static_cast<int>(yCoordinate);
+}
+
+void SpriteComponent::SetFrame(int number)
+{
+	if (number >= m_MaxFrames + 1)
+	{
+		return;
+	}
+	m_AnimationFrames = number; 
+	m_ResourceRect.x = static_cast<int>(m_AnimationFrames * m_FrameWidht);
+}
+
+void SpriteComponent::SetMaxedFrames(int maxFrames)
+{
+	m_MaxFrames = maxFrames;
 }
 

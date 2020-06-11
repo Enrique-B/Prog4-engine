@@ -1,19 +1,29 @@
 #pragma once
 #include <vector>
 #include "BaseComponent.h"
-class BaseState;
+class MoveStateX;
+class LifeState;
+class MoveStateY;
 class StateComponent final : public BaseComponent
 {
 public: 
 	StateComponent()noexcept;
-	void AddState(BaseState* pState)noexcept(false);
+	~StateComponent()noexcept;
 	virtual void Update(float elapsedSec)override;
-	void SetCurrentState(BaseState* pState)noexcept(false);
-	BaseState* GetCurrentState()const noexcept { return m_CurrentState; };
-	const std::vector<BaseState*>& GetStates()const noexcept { return m_States; };
+	void SetMoveStateX(MoveStateX* pState)noexcept(false);
+	void SetMoveStateY(MoveStateY* pState)noexcept(false);
+	void SetLifeState(LifeState* pState)noexcept(false);
+	const Fried::float2& GetVelicity()const { return m_Velocity; };
+	void SetVelocity(const Fried::float2& vel);
 private:
-	std::vector<BaseState*> m_States;
-	BaseState* m_CurrentState;
-	bool m_DidStatechange;
+	Fried::float2 m_Velocity; 
+	MoveStateX* m_CurrentMoveStateX;
+	MoveStateY* m_pIdleMoveStateY;
+	MoveStateY* m_CurrentMoveStateY;
+	LifeState* m_CurrentLifeState;
+	bool m_DidMoveStateXChange;
+	bool m_DidMoveStateYChange;
+	bool m_DidLifeStateChange;
+	float m_JumpVelocity;
 };
 

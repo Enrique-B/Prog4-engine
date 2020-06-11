@@ -193,7 +193,6 @@ xcopy "$(SolutionDir)3rdParty\SDL2_mixer-2.0.2\lib\x64\SDL2_mixer.dll" "$(Output
   <ItemGroup>
     <ClCompile Include="BaseState.cpp" />
     <ClCompile Include="Command.cpp" />
-    <ClCompile Include="DemoScene.cpp" />
     <ClCompile Include="FriedEngine.cpp" />
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
@@ -205,7 +204,6 @@ xcopy "$(SolutionDir)3rdParty\SDL2_mixer-2.0.2\lib\x64\SDL2_mixer.dll" "$(Output
   <ItemGroup>
     <ClInclude Include="BaseState.h" />
     <ClInclude Include="Command.h" />
-    <ClInclude Include="DemoScene.h" />
     <ClInclude Include="FriedEngine.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

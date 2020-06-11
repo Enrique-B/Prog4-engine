@@ -17,7 +17,9 @@ public:
 	void SetDestRectHeight(float yCoordinate)noexcept;
 	bool IsAnimationFinished()const noexcept { return m_IsAnimtionFinished; };
 	void SetIsGoingLeft(bool isGoingLeft)noexcept { m_IsGoingLeft = isGoingLeft; };
-
+	void SetUpdate(bool update) { m_IsUpUpdating = update;};
+	void SetFrame(int number);
+	void SetMaxedFrames(int maxFrames);
 private: 
 	const float m_FrameWidht; 
 	const float m_FrameHeight;
@@ -29,6 +31,7 @@ private:
 	int m_AnimationFrames;
 	bool m_IsAnimtionFinished;
 	bool m_IsGoingLeft;
+	bool m_IsUpUpdating; 
 	SDL_Texture* m_pTexture;
 	SDL_Rect m_ResourceRect;
 };

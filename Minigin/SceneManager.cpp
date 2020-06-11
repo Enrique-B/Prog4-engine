@@ -7,9 +7,9 @@ void Fried::SceneManager::Update(float elapsedSec)
 	m_pScenes[m_CurrentScene]->Update(elapsedSec);
 }
 
-void Fried::SceneManager::CollisionUpdate()noexcept
+void Fried::SceneManager::CollisionUpdate(float elapsedSec)noexcept
 {
-	m_pScenes[m_CurrentScene]->CollisionUpdate();
+	m_pScenes[m_CurrentScene]->CollisionUpdate(elapsedSec);
 }
 
 void Fried::SceneManager::Render()noexcept

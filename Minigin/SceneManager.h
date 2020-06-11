@@ -14,7 +14,7 @@ class Scene;
 		Scene* GetNextScene()noexcept;
 		Scene* GetPreviousScene()noexcept;
 		void Update(float elapsedSec);
-		void CollisionUpdate()noexcept;
+		void CollisionUpdate(float elapsedSec)noexcept;
 		void Render()noexcept;
 		void SetIsRenderingCollision(bool isRenderingCollision)noexcept {m_IsRenderingCollision = isRenderingCollision;}
 		bool GetIsRenderingCollision()const noexcept { return m_IsRenderingCollision; }

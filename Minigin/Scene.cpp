@@ -3,9 +3,10 @@
 #include "GameObject.h"
 #include "ColliderComponent.h"
 #include "TransformComponent.h"
+#include "StateComponent.h"
 
 Fried::Scene::Scene(const std::string& name) noexcept
-	: m_Name(name) 
+	: m_Name(name) , timeUntilNextUpdate{0}
 {
 }
 
@@ -111,57 +112,23 @@ void Fried::Scene::Update(float elapsedSec)
 	}
 }
 
-void Fried::Scene::CollisionUpdate() noexcept
+void Fried::Scene::CollisionUpdate(float elapsedSec) noexcept
 {
-	const size_t dynamicSize{m_DynamicColliders.size()};
-	const size_t staticSize{ m_StaticColliders.size() };
-	HitInfo info{};
-	//loop over the dynamic colliders
-	for (size_t i = 0; i < dynamicSize; i++)
+	timeUntilNextUpdate += elapsedSec; 
+	if (timeUntilNextUpdate > 0.02f) // 1/50 == will run at 50 fps 
 	{
-		//get the collisionLines from the dynamic collider
-		const std::vector<Fried::line> lines{ m_DynamicColliders[i]->GetLines() };
-		const size_t lineSize{ lines.size() };
-		//loop over the static colliders and the lines so i can see if they intersect
-		for (size_t j = 0; j < staticSize; j++)
+		timeUntilNextUpdate = 0;
+		const size_t dynamicSize{ m_DynamicColliders.size() };
+		const size_t staticSize{ m_StaticColliders.size() };
+		HitInfo info{};
+		//loop over the dynamic colliders
+		for (size_t i = 0; i < dynamicSize; i++)
 		{
-			for (size_t l = 0; l < lineSize; l++)
-			{
-				// to be continued
-				lines[l].intersect(m_StaticColliders[j]->GetCollisionRect(), info);
-				if (info.hit)
-				{
-					const size_t hitinfoVectorSize{ info.intersectPoint.size() };
-					for (size_t h = 0; h < hitinfoVectorSize; h++)
-					{
-						float2 move{};
-						switch (info.collision[h])
-						{
-						case Collision::None:
-							break;
-						case Collision::Left:
-							move.x = info.intersectPoint[h].x - lines[l].differenceVec.x;
-							break;
-						case Collision::Right:
-							move.x = lines[l].differenceVec.x - info.intersectPoint[h].x;
-							break;
-						case Collision::Up:
-							move.y = info.intersectPoint[h].y - lines[l].differenceVec.y;
-							break;
-						case Collision::Down:
-							move.y = /*info.intersectPoint[h].y -*/ lines[l].differenceVec.y/*lines[l].differenceVec.y - info.intersectPoint[h].y*/;
-							break;
-						default:
-							break;
-						}
-						m_DynamicColliders[i]->GetGameObject()->GetTransform()->Move(move);
-						m_DynamicColliders[i]->Update(0);
-					}
-					info.hit = false; 
-					info.collision.clear();
-					info.intersectPoint.clear();
-				}
-			}
+			m_DynamicColliders[i]->SetTrigger(ColliderTrigger::None);
+			//get the collisionLines from the dynamic collider
+			const std::vector<CollisionLine> lines{ m_DynamicColliders[i]->GetLines() };
+			CheckStaticCollision(i, lines);
+			CheckDynamicCollision(i, lines);
 		}
 	}
 }
@@ -179,6 +146,156 @@ void Fried::Scene::RenderCollision() const noexcept
 	for (const auto& object : m_pObjects)
 	{
 		object->RenderCollision();
+	}
+}
+
+bool Fried::Scene::Raycast(const Fried::line& line, bool raycastStaticColliders, bool raycastDynamicColiders, Fried::HitInfo& hitInfo)
+{
+	if (!raycastDynamicColiders && !raycastStaticColliders)
+	{
+		return false;
+	}
+	if (raycastStaticColliders)
+	{
+		const size_t size{m_StaticColliders.size()};
+		for (size_t i = 0; i < size; i++)
+		{
+			line.intersect(m_StaticColliders[i]->GetCollisionRect(), hitInfo);
+		}
+	}
+	if (raycastDynamicColiders)
+	{
+		const size_t size{ m_DynamicColliders.size() };
+		for (size_t i = 0; i < size; i++)
+		{
+			line.intersect(m_DynamicColliders[i]->GetCollisionRect(), hitInfo);
+		}
+	}
+	return hitInfo.hit;
+}
+
+bool Fried::Scene::RaycastPLayer(const Fried::line& line, Fried::HitInfo& hitinfo)
+{
+	const size_t size{ m_DynamicColliders.size() };
+	for (size_t i = 0; i < size; i++)
+	{
+		Fried::HitInfo info; 
+		line.intersect(m_DynamicColliders[i]->GetCollisionRect(), info);
+		if (info.hit && !m_DynamicColliders[i]->GetGameObject()->HasComponent(ComponentName::enemy))
+		{
+			hitinfo.hit = true;
+			hitinfo += info; 
+		}
+	}
+	return hitinfo.hit;
+}
+
+void Fried::Scene::CheckStaticCollision(size_t index, const std::vector<CollisionLine>& lines)
+{
+	HitInfo info{};
+	const size_t staticSize{ m_StaticColliders.size() };
+	const size_t lineSize{ lines.size() };
+	//loop over the static colliders and the lines so i can see if they intersect
+	StateComponent *state = m_DynamicColliders[index]->GetGameObject()->GetComponent<StateComponent>(ComponentName::state);
+	Fried::float2 velocity = state->GetVelicity();
+	for (size_t j = 0; j < staticSize; j++)
+	{
+		const SDL_Rect staticCollider{ m_StaticColliders[j]->GetCollisionRect() };
+		for (size_t l = 0; l < lineSize; l++)
+		{
+			// to be continued
+			lines[l].line.intersect(staticCollider, info);
+			if (info.hit)
+			{
+				const size_t hitinfoVectorSize{ info.intersectPoint.size() };
+				for (size_t h = 0; h < hitinfoVectorSize; h++)
+				{
+					float2 move{};
+					if (lines[l].collision & ColliderTrigger::left)
+					{
+						move.x = -(lines[l].line.p2.x - info.intersectPoint[h].x);
+						if (!m_DynamicColliders[index]->HasTrigger(ColliderTrigger::left))
+						{
+							m_DynamicColliders[index]->SetTrigger(ColliderTrigger::left);
+						}
+					}
+					if (lines[l].collision & ColliderTrigger::right)
+					{
+						move.x = -(lines[l].line.p2.x - info.intersectPoint[h].x);
+						if (!m_DynamicColliders[index]->HasTrigger(ColliderTrigger::right))
+						{
+							m_DynamicColliders[index]->SetTrigger(ColliderTrigger::right);
+						}
+					}
+					if (lines[l].collision & ColliderTrigger::Top)
+					{
+						if (velocity.y > 0)
+						{
+							if (!m_DynamicColliders[index]->HasTrigger(ColliderTrigger::Top))
+							{
+								move.y = (info.intersectPoint[h].y - lines[l].line.p2.y) + 1;
+								m_DynamicColliders[index]->SetTrigger(ColliderTrigger::Top);
+							}
+						}
+					}
+					if (lines[l].collision & ColliderTrigger::Bottom)
+					{
+						if (velocity.y > 0)
+						{
+							if (!m_DynamicColliders[index]->HasTrigger(ColliderTrigger::Bottom))
+							{
+								move.y = (info.intersectPoint[h].y - lines[l].line.p2.y) + 1;
+								m_DynamicColliders[index]->SetTrigger(ColliderTrigger::Bottom);
+							}
+						}
+					}
+					m_DynamicColliders[index]->GetGameObject()->GetTransform()->Move(move);
+					m_DynamicColliders[index]->Update(0);
+				}
+				info.hit = false;
+				info.intersectPoint.clear();
+			}
+		}
+	}
+}
+
+void Fried::Scene::CheckDynamicCollision(size_t index, const std::vector<CollisionLine>& lines)
+{
+	const size_t dynamicSize{ m_DynamicColliders.size() };
+	const size_t lineSize{ lines.size() };
+	HitInfo info{};
+	GameObject* pCurrentObject{m_DynamicColliders[index]->GetGameObject()};
+	const bool isCurrentObjectPlayer{ !pCurrentObject->HasComponent(ComponentName::bubble) && !pCurrentObject->HasComponent(ComponentName::enemy) };
+	const bool isCurrentObjectBubble{ pCurrentObject->HasComponent(ComponentName::bubble) };
+
+	for (size_t i = 0; i < dynamicSize; i++)
+	{
+		if (index != i) // don't want to check itself
+		{
+			for (size_t l = 0; l < lineSize; l++)
+			{
+				lines[l].line.intersect(m_DynamicColliders[i]->GetCollisionRect(), info);
+				if (info.hit)
+				{
+					GameObject* pLoopedObject = m_DynamicColliders[i]->GetGameObject();
+					const bool isLoopedObjectEnemy{ pLoopedObject->HasComponent(ComponentName::enemy) };
+					const bool isLoopedObjectBubble{ pLoopedObject->HasComponent(ComponentName::bubble) };
+					if (isCurrentObjectPlayer && isLoopedObjectEnemy)
+					{
+						// do damage to player 
+						m_DynamicColliders[index]->SetTrigger(ColliderTrigger::PlayerHit);
+					}
+					else if (isLoopedObjectEnemy && isCurrentObjectBubble)
+					{
+						m_DynamicColliders[index]->SetTrigger(ColliderTrigger::EnemyHit);
+						// capture enemy in bubble
+						// set enemy to non active
+					}
+					info.hit = false;
+					info.intersectPoint.clear();
+				}
+			}
+		}
 	}
 }
 

@@ -4,6 +4,7 @@
 #include "SceneManager.h"
 #include "Renderer.h"
 #include "ResourceManager.h"
+#include "StateManager.h"
 #include "TextComponent.h"
 #include "GameObject.h"
 #include "Scene.h"
@@ -45,7 +46,7 @@ void Fried::Minigin::Initialize()
 	Renderer::GetInstance()->Init(m_Window);
 	// tell the resource manager where he can find the game data
 	Fried::ResourceManager::GetInstance()->Init("../Data/");
-
+	StateManager::GetInstance();
 }
 
 void Fried::Minigin::Cleanup()
@@ -58,6 +59,7 @@ void Fried::Minigin::Cleanup()
 	delete Renderer::GetInstance();
 	delete ResourceManager::GetInstance(); 
 	delete SceneManager::GetInstance(); 
+	delete StateManager::GetInstance();
 }
 
 void Fried::Minigin::Run()
@@ -79,8 +81,10 @@ void Fried::Minigin::Run()
 
 			doContinue = input->ProcessInput();
 			input->HandleInput();
+			collisionThread = std::async(std::launch::async, &SceneManager::CollisionUpdate, sceneManager, elapsedSec);
+			
+			//sceneManager->CollisionUpdate();
 			sceneManager->Update(elapsedSec);
-			sceneManager->CollisionUpdate();
 			// render
 			renderer->Render();
 			// Get current time
