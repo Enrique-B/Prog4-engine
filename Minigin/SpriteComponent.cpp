@@ -17,6 +17,7 @@ SpriteComponent::SpriteComponent(int maxFrames, int framesPerSecond, float frame
 	,m_pTexture{Fried::ResourceManager::GetInstance()->LoadTexture(file)}
 	, m_ResourceRect{0,0,int(frameWidht), int(frameHeight)}
 	, m_IsGoingLeft{true}
+	, m_IsUpUpdating{true}
 {
 	SDL_QueryTexture(m_pTexture, nullptr, nullptr, nullptr, nullptr);
 	SetComponentName(ComponentName::Sprite);
@@ -62,7 +63,7 @@ void SpriteComponent::Render(const Fried::float2& pos) const noexcept
 	Fried::Renderer::GetInstance()->RenderTexture(m_pTexture, m_ResourceRect, DestRect, 0, SDL_Point{}, m_IsGoingLeft);
 }
 
-void SpriteComponent::SetDestRectHeight(float yCoordinate)noexcept
+void SpriteComponent::SetDestRectY(float yCoordinate)noexcept
 {
 	m_ResourceRect.y = static_cast<int>(yCoordinate);
 }

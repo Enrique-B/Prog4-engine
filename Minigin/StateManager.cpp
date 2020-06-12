@@ -3,16 +3,21 @@
 #include "../Game/BaseState.h"
 Fried::StateManager::~StateManager()
 {
-	for (auto pair : m_pLifeStates)
+	for (auto& pair : m_pLifeStates)
 	{
 		SafeDelete(pair.second);
 	}
-	for (auto pair : m_pMoveStateX)
+	for (auto& pair : m_pMoveStateX)
 	{
 		SafeDelete(pair.second);
 	}
 
-	for (auto pair : m_pMoveStateY)
+	for (auto& pair : m_pMoveStateY)
+	{
+		SafeDelete(pair.second);
+	}
+
+	for (auto& pair : m_pWeaponStates)
 	{
 		SafeDelete(pair.second);
 	}
@@ -49,6 +54,16 @@ MoveStateY* Fried::StateManager::GetMoveStateY(const std::string& stateName) con
 	return m_pMoveStateY.at(stateName);
 }
 
+WeaponState* Fried::StateManager::GetWeaponState(const std::string& stateName) const
+{
+#ifdef _DEBUG
+	const auto it = m_pWeaponStates.find(stateName);
+	if (it == m_pWeaponStates.cend())
+		throw std::runtime_error(std::string("StateManager::GetWeaponState " + stateName + "is not in the unsorted map\n"));
+#endif // _DEBUG
+	return m_pWeaponStates.at(stateName);
+}
+
 void Fried::StateManager::AddLifeState(LifeState* pLifeState)
 {
 #ifdef _DEBUG
@@ -78,4 +93,14 @@ void Fried::StateManager::AddMoveStateY(MoveStateY* pMoveStateY)
 		throw std::runtime_error(std::string("StateManager::AddMoveStateY " + pMoveStateY->GetName() + " is already in the map\n"));
 #endif
 	m_pMoveStateY.emplace(std::make_pair(pMoveStateY->GetName(), pMoveStateY));
+}
+
+void Fried::StateManager::AddWeaponState(WeaponState* pWeaponState)
+{
+#ifdef _DEBUG
+	const auto it = m_pWeaponStates.find(pWeaponState->GetName());
+	if (it != m_pWeaponStates.cend())
+		throw std::runtime_error(std::string("StateManager::AddMoveStateY " + pWeaponState->GetName() + " is already in the map\n"));
+#endif
+	m_pWeaponStates.emplace(std::make_pair(pWeaponState->GetName(), pWeaponState));
 }

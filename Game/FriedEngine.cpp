@@ -25,6 +25,9 @@ void Fried::FriedEngine::LoadGame()
 	pStateManager->AddLifeState(new DeathState{});
 	pStateManager->AddLifeState(new AliveState{});
 	pStateManager->AddLifeState(new InvincibleState{});
+	pStateManager->AddWeaponState(new WeaponStateNone{});
+	pStateManager->AddWeaponState(new WeaponStateShootBubble{});
+
 
 	BubleBobbleLevelDataReader pData{};
 	pData.Read();
@@ -34,7 +37,7 @@ void Fried::FriedEngine::LoadGame()
 	const size_t objectSize{ pObjects.size() };
 	std::vector <GameObject*> pCharacters;
 	for (size_t i = 0; i < objectSize; i++)
-		if (pObjects[i]->HasComponent(ComponentName::state) && !pObjects[i]->HasComponent(ComponentName::enemy))
+		if (pObjects[i]->HasComponent(ComponentName::Character))
 			pCharacters.push_back(pObjects[i]);
 
 	InputManager* pInput = Fried::InputManager::GetInstance();
@@ -44,7 +47,7 @@ void Fried::FriedEngine::LoadGame()
 	pInput->AddCommand(Input{ new MoveLeftCommand{pCharacters[0]}, inputState::down, SDL_SCANCODE_LEFT, 0, ControllerButton::DPadLeft });
 	pInput->AddCommand(Input{ new MoveRightCommand{pCharacters[0]}, inputState::down, SDL_SCANCODE_RIGHT, 0, ControllerButton::DPadRight });
 	pInput->AddCommand(Input{ new JumpCommand{pCharacters[0]}, inputState::pressed, SDL_SCANCODE_UP, 0, ControllerButton::ButtonA });
-	pInput->AddCommand(Input{ new ShootBubbleCommand{pCharacters[0]}, inputState::release, SDL_SCANCODE_DOWN, 0, ControllerButton::ButtonB });
+	pInput->AddCommand(Input{ new ShootBubbleCommand{pCharacters[0]}, inputState::pressed, SDL_SCANCODE_DOWN, 0, ControllerButton::ButtonB });
 
 	// releasing will make it idle again like how it should be 
 	pInput->AddCommand(Input{ new ReleaseMovementCommand{pCharacters[0]}, inputState::release, SDL_SCANCODE_LEFT, 0, ControllerButton::DPadLeft });

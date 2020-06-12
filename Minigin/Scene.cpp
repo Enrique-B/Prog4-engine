@@ -4,6 +4,7 @@
 #include "ColliderComponent.h"
 #include "TransformComponent.h"
 #include "StateComponent.h"
+#include "BubbleComponent.h"
 
 Fried::Scene::Scene(const std::string& name) noexcept
 	: m_Name(name) , timeUntilNextUpdate{0}
@@ -12,12 +13,18 @@ Fried::Scene::Scene(const std::string& name) noexcept
 
 Fried::Scene::~Scene()
 {
-	const size_t size{ m_pObjects.size() };
+	size_t size{ m_pObjects.size() };
 	for (size_t i = 0; i < size; i++)
 	{
 		SafeDelete(m_pObjects[i]);
 	}
 	m_pObjects.clear();
+	size = m_pDeactivatedGameObjects.size();
+	for (size_t i = 0; i < size; i++)
+	{
+		SafeDelete(m_pDeactivatedGameObjects[i]);
+	}
+	m_pDeactivatedGameObjects.clear();
 }
 
 void Fried::Scene::AddGameObject(GameObject* pObject)
@@ -33,6 +40,25 @@ void Fried::Scene::AddGameObject(GameObject* pObject)
 		m_pObjects.push_back(pObject);
 		pObject->SetScene(this);
 		pObject->Initialize();
+		pObject->SetIsActive(true);
+	}
+	else
+	{
+		throw std::runtime_error(std::string("Scene::AddGameObject was a nullptr"));
+	}
+}
+
+void Fried::Scene::AddGameObjectToNonActive(GameObject* pObject) noexcept(false)
+{
+	if (pObject != nullptr)
+	{
+#ifdef _DEBUG
+		if (std::find(m_pDeactivatedGameObjects.cbegin(), m_pDeactivatedGameObjects.cend(), pObject) != m_pDeactivatedGameObjects.cend())
+		{
+			throw std::runtime_error(std::string("Scene::AddGameObjectToNonActive is already in the scene \n"));
+		}
+#endif // _DEBUG
+		m_pDeactivatedGameObjects.push_back(pObject);
 	}
 	else
 	{
@@ -42,16 +68,29 @@ void Fried::Scene::AddGameObject(GameObject* pObject)
 
 void Fried::Scene::RemoveGameObject(GameObject* object)
 {
-	UNREFERENCED_PARAMETER(object);
 	auto it = std::find(m_pObjects.cbegin(), m_pObjects.cend(), object);
 #ifdef _DEBUG
-	if (std::find(m_pObjects.cbegin(), m_pObjects.cend(), object) != m_pObjects.cend())
+	if (std::find(m_pObjects.cbegin(), m_pObjects.cend(), object) == m_pObjects.cend())
 	{
 		throw std::runtime_error(std::string("Scene::RemoveGameObject gameObject was not in the scene \n"));
 	}
 #endif
 	m_pObjects.erase(it);
 	object->SetScene(nullptr);
+}
+
+void Fried::Scene::RemoveGameObjectToNonActive(GameObject* pObject) noexcept(false)
+{
+	auto it = std::find(m_pDeactivatedGameObjects.cbegin(), m_pDeactivatedGameObjects.cend(), pObject);
+#ifdef _DEBUG
+	if (std::find(m_pDeactivatedGameObjects.cbegin(), m_pDeactivatedGameObjects.cend(), pObject) == m_pDeactivatedGameObjects.cend())
+	{
+		throw std::runtime_error(std::string("Scene::RemoveGameObjectToNonActive gameObject was not in the scene \n"));
+	}
+#endif
+	m_pDeactivatedGameObjects.erase(it);
+	pObject->SetScene(nullptr);
+
 }
 
 void Fried::Scene::AddCollider(ColliderComponent* pCollider)
@@ -95,7 +134,7 @@ void Fried::Scene::RemoveCollider(ColliderComponent* pCollider)
 	{
 		auto it = std::find(m_DynamicColliders.begin(), m_DynamicColliders.end(), pCollider);
 #ifdef _DEBUG
-		if (it == m_StaticColliders.end())
+		if (it == m_DynamicColliders.end())
 		{
 			throw std::runtime_error(std::string("Scene::RemoveCollider Collider is not in Vector\n"));
 		}
@@ -106,9 +145,10 @@ void Fried::Scene::RemoveCollider(ColliderComponent* pCollider)
 
 void Fried::Scene::Update(float elapsedSec)
 {
-	for (const auto& object : m_pObjects)
+	const size_t size{ m_pObjects.size() };
+	for (size_t i = 0; i < size; i++)
 	{
-		object->Update(elapsedSec);
+		m_pObjects[i]->Update(elapsedSec);
 	}
 }
 
@@ -129,6 +169,29 @@ void Fried::Scene::CollisionUpdate(float elapsedSec) noexcept
 			const std::vector<CollisionLine> lines{ m_DynamicColliders[i]->GetLines() };
 			CheckStaticCollision(i, lines);
 			CheckDynamicCollision(i, lines);
+		}
+	}
+}
+
+void Fried::Scene::DeactivateNonActiveGameObjects()
+{
+	// can't be a range based for loop because i'm going to delete stuff here
+	for (size_t i = 0; i < m_pObjects.size(); i++)
+	{
+		if (!m_pObjects[i]->GetIsActive())
+		{
+			GameObject* pCopy{ m_pObjects[i] };
+			RemoveGameObject(pCopy);
+			if (pCopy->HasComponent(ComponentName::collider))
+			{
+				std::vector<ColliderComponent*> collidersInGameObject{ pCopy->GetComponents<ColliderComponent>(ComponentName::collider) };
+				const size_t size = collidersInGameObject.size();
+				for (size_t j = 0; j < size; j++)
+				{
+					RemoveCollider(collidersInGameObject[j]);
+				}
+			}
+			AddGameObjectToNonActive(pCopy);
 		}
 	}
 }
@@ -270,14 +333,14 @@ void Fried::Scene::CheckDynamicCollision(size_t index, const std::vector<Collisi
 
 	for (size_t i = 0; i < dynamicSize; i++)
 	{
-		if (index != i) // don't want to check itself
+		GameObject* pLoopedObject = m_DynamicColliders[i]->GetGameObject();
+		if (index != i && pLoopedObject->GetIsActive()) // don't want to check itself
 		{
 			for (size_t l = 0; l < lineSize; l++)
 			{
 				lines[l].line.intersect(m_DynamicColliders[i]->GetCollisionRect(), info);
 				if (info.hit)
 				{
-					GameObject* pLoopedObject = m_DynamicColliders[i]->GetGameObject();
 					const bool isLoopedObjectEnemy{ pLoopedObject->HasComponent(ComponentName::enemy) };
 					const bool isLoopedObjectBubble{ pLoopedObject->HasComponent(ComponentName::bubble) };
 					if (isCurrentObjectPlayer && isLoopedObjectEnemy)
@@ -287,9 +350,19 @@ void Fried::Scene::CheckDynamicCollision(size_t index, const std::vector<Collisi
 					}
 					else if (isLoopedObjectEnemy && isCurrentObjectBubble)
 					{
-						m_DynamicColliders[index]->SetTrigger(ColliderTrigger::EnemyHit);
-						// capture enemy in bubble
-						// set enemy to non active
+						BubbleComponent* pBubble = pCurrentObject->GetComponent<BubbleComponent>(ComponentName::bubble);
+						if (!pBubble->IsHitByEnemy())
+						{
+							m_DynamicColliders[index]->SetTrigger(ColliderTrigger::EnemyHit);
+							// capture enemy in bubble
+							pBubble->SetEnemyType(pLoopedObject->GetComponent<EnemyComponent>(ComponentName::enemy)->GetEnemyType());
+							// set enemy to non active
+							pLoopedObject->SetIsActive(false);
+						}
+					}
+					else if (isCurrentObjectPlayer && isLoopedObjectBubble)
+					{
+						m_DynamicColliders[i]->SetTrigger(ColliderTrigger::PlayerHit);
 					}
 					info.hit = false;
 					info.intersectPoint.clear();

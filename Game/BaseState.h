@@ -39,7 +39,6 @@ public:
 	virtual void Update(float elapsedSec, float& velocity)override;
 };
 
-
 class InvincibleState : public LifeState // life, death, invincable(after death)
 {
 public:
@@ -47,7 +46,6 @@ public:
 	virtual ~InvincibleState() = default;
 	virtual void Update(float elapsedSec, float& velocity)override;
 };
-
 
 class MoveStateX : public BaseState // left, right
 {
@@ -124,3 +122,27 @@ public:
 private:
 };
 
+class WeaponState : public BaseState 
+{
+public:
+	virtual ~WeaponState() = default;
+	virtual void Update(float elapsedSec, float& velocity) = 0;
+};
+
+class WeaponStateNone : public WeaponState
+{
+public: 
+	WeaponStateNone();
+	virtual ~WeaponStateNone() = default;
+	void Update(float, float&) {};
+
+};
+
+class WeaponStateShootBubble : public WeaponState
+{
+public:
+	WeaponStateShootBubble();
+	virtual ~WeaponStateShootBubble() = default;
+	void Update(float, float&) {};
+
+};

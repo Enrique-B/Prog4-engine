@@ -19,6 +19,11 @@ void Fried::SceneManager::Render()noexcept
 		m_pScenes[m_CurrentScene]->RenderCollision();
 }
 
+void Fried::SceneManager::DeactivateNonActiveGameObjects() noexcept(false)
+{
+	m_pScenes[m_CurrentScene]->DeactivateNonActiveGameObjects();
+}
+
 Fried::SceneManager::~SceneManager()
 {
 	const size_t size{ m_pScenes.size() };

@@ -13,5 +13,7 @@ private:
 	float m_AmountOfSecBeforeReset; 
 	float m_AmountOfSecOfInvincability;
 	int m_AmountOfLives;
+
 	void Reset();
+	void MakeBubble();
 };

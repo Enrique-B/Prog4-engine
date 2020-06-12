@@ -9,6 +9,7 @@ public:
 	EnemyComponent(unsigned char enemyType, const float amountOfSecIdle, bool islookingleft)noexcept;
 	virtual void Update(float elapsedSec) override;
 	virtual void Initialize()override;
+	unsigned char GetEnemyType()const noexcept { return m_EnemyType; }
 private: 
 	unsigned char m_EnemyType;
 	const float m_AmountOfSecIdle;

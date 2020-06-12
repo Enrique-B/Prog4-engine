@@ -36,11 +36,11 @@ void BubleBobbleLevelDataReader::Read()
 	ReadLevelData();
 	ReadEnemyData();
 	auto pObject = new GameObject{};
-
 	pObject->AddComponent(new ColliderComponent{ SDL_Rect{0,0,m_DestBlockWidth * 2,m_DestBlockWidth * 2},false });
 	pObject->AddComponent(new StateComponent());
 	const int spriteWidth{ 16 };
-	SpriteComponent* pSprite = new SpriteComponent{ 4, 4, spriteWidth,spriteWidth, "../Data/heroGreen.png",m_DestBlockWidth * 2,m_DestBlockWidth * 2 };
+	SpriteComponent* pSprite = new SpriteComponent{ 4, 4, spriteWidth,spriteWidth, "heroGreen.png",m_DestBlockWidth * 2,m_DestBlockWidth * 2 };
+	pSprite->SetUpdate(false);
 	pObject->AddComponent(pSprite);
 	pObject->AddComponent(new CharacterComponent{});
 	pObject->SetPosition(spriteWidth * 3, spriteWidth * 34 + 40);
@@ -170,7 +170,7 @@ void BubleBobbleLevelDataReader::ReadEnemyData()
 			pObject->AddComponent(pComp);
 			pObject->AddComponent(new ColliderComponent{ collisionRect , false });
 			SpriteComponent* pSprite = new SpriteComponent{ 4, 4, spriteWidth,spriteWidth, spriteName,m_DestBlockWidth * 2,m_DestBlockWidth * 2 };
-			pSprite->SetDestRectHeight(float(enemyType * spriteWidth));
+			pSprite->SetDestRectY(float(enemyType * spriteWidth));
 			pObject->AddComponent(pSprite);
 			pObject->AddComponent(new StateComponent{});
 			m_Scenes[levelNumber]->AddGameObject(pObject);
@@ -210,7 +210,6 @@ void BubleBobbleLevelDataReader::Check(bool bit, GameObject* pObject, const std:
 			{
 				pObject->AddComponent(new ColliderComponent{ Collision,true });
 			}
-			
 			Collision.x += Collision.w;
 			Collision.w = 2 * m_DestBlockWidth;
 			wasLastBlockCollision = true;
@@ -221,8 +220,6 @@ void BubleBobbleLevelDataReader::Check(bool bit, GameObject* pObject, const std:
 			wasLastBlockCollision = true;
 
 		}
-		UNREFERENCED_PARAMETER(resource);
-		UNREFERENCED_PARAMETER(textureName);
 		pObject->AddComponent(new TextureComponent{ textureName, dest, resource });
 	}
 	else
@@ -239,14 +236,7 @@ void BubleBobbleLevelDataReader::Check(bool bit, GameObject* pObject, const std:
 		}
 		else
 		{
-			if (row == Row::last)
-			{
-				Collision.w += m_DestBlockWidth;
-			}
-			else
-			{
-				Collision.x += m_DestBlockWidth;
-			}
+			row == Row::last ? Collision.w += m_DestBlockWidth : Collision.x += m_DestBlockWidth;
 		}
 		wasLastBlockCollision = false;
 	}

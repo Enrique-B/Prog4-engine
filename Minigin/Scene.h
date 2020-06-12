@@ -19,12 +19,14 @@ namespace Fried
 		Scene& operator=(Scene&& other) = delete;
 
 		void AddGameObject(GameObject* object)noexcept(false);
+		void AddGameObjectToNonActive(GameObject* pObject)noexcept(false);
 		void RemoveGameObject(GameObject* object)noexcept(false);
+		void RemoveGameObjectToNonActive(GameObject* pObject)noexcept(false);
 		void AddCollider(ColliderComponent* pCollider)noexcept(false);
 		void RemoveCollider(ColliderComponent* pCollider)noexcept(false);
-
 		void Update(float elapsedSec)noexcept(false);
 		void CollisionUpdate(float elapsedSec)noexcept;
+		void DeactivateNonActiveGameObjects()noexcept(false);
 		void Render() const noexcept;
 		void RenderCollision()const noexcept;
 		const std::vector<GameObject*>& GetChildren()const noexcept { return m_pObjects; }
@@ -33,6 +35,7 @@ namespace Fried
 
 	protected: 
 		std::vector<GameObject*> m_pObjects{};
+		std::vector<GameObject*> m_pDeactivatedGameObjects{};
 	private:
 		std::string m_Name;
 		std::vector<ColliderComponent*> m_StaticColliders;

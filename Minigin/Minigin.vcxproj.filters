@@ -159,7 +159,7 @@
       <Filter>Components</Filter>
     </ClCompile>
     <ClCompile Include="CharacterComponent.cpp">
-      <Filter>GameObjects</Filter>
+      <Filter>Components</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -16,8 +16,10 @@ class Scene;
 		void Update(float elapsedSec);
 		void CollisionUpdate(float elapsedSec)noexcept;
 		void Render()noexcept;
+		void DeactivateNonActiveGameObjects()noexcept(false);
 		void SetIsRenderingCollision(bool isRenderingCollision)noexcept {m_IsRenderingCollision = isRenderingCollision;}
 		bool GetIsRenderingCollision()const noexcept { return m_IsRenderingCollision; }
+
 	private:
 		friend class Singleton<SceneManager>;
 		SceneManager() : m_CurrentScene{0} , m_IsRenderingCollision(true){};

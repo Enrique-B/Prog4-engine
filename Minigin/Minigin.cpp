@@ -27,7 +27,7 @@ void Fried::Minigin::Initialize()
 	const int windowHeight{ 25 * 24 + 40};
 
 	m_Window = SDL_CreateWindow(
-		"Programming 4 assignment",
+		"Enrique Brosse Bubble Bobble Scuffed Version",
 		SDL_WINDOWPOS_UNDEFINED,
 		SDL_WINDOWPOS_UNDEFINED,
 		windowWidth,
@@ -93,6 +93,8 @@ void Fried::Minigin::Run()
 			elapsedSec = std::chrono::duration<float>(t2 - t1).count();
 			// Update current time
 			t1 = t2;
+			collisionThread.get(); // should stop the loop here and remove the non active objects 
+			sceneManager->DeactivateNonActiveGameObjects();
 		}
 	}
 	Cleanup();

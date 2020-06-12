@@ -14,9 +14,10 @@ public:
 
 	virtual void Update(float elapsedSec)noexcept;
 	virtual void Render(const Fried::float2 & pos)const noexcept;
-	void SetDestRectHeight(float yCoordinate)noexcept;
+	void SetDestRectY(float yCoordinate)noexcept;
 	bool IsAnimationFinished()const noexcept { return m_IsAnimtionFinished; };
 	void SetIsGoingLeft(bool isGoingLeft)noexcept { m_IsGoingLeft = isGoingLeft; };
+	bool GetIsGoingLeft()const noexcept { return m_IsGoingLeft; }
 	void SetUpdate(bool update) { m_IsUpUpdating = update;};
 	void SetFrame(int number);
 	void SetMaxedFrames(int maxFrames);

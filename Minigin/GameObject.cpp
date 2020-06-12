@@ -91,10 +91,7 @@ bool GameObject::HasComponent(ComponentName name) const noexcept
 
 void GameObject::SetIsActive(bool isActive)
 {
-	if (isActive != m_IsActive)
-	{
-		m_IsActive = m_IsActive; 
-	}
+	m_IsActive = isActive;
 }
 
 void GameObject::Initialize()noexcept(false)

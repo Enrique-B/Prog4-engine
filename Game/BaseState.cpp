@@ -98,3 +98,13 @@ InvincibleState::InvincibleState()
 void InvincibleState::Update(float , float& )
 {
 }
+
+WeaponStateNone::WeaponStateNone()
+{
+	SetName("WeaponStateNone");
+}
+
+WeaponStateShootBubble::WeaponStateShootBubble()
+{
+	SetName("WeaponStateShootBubble");
+}

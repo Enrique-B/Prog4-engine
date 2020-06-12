@@ -29,6 +29,7 @@ StateComponent::~StateComponent()
 
 void StateComponent::Update(float elapsedSec)
 {
+	// check something with the weapon state and if it's shooting if it is make a new game object with a bubble
 	m_CurrentMoveStateX->Update(elapsedSec, m_Velocity.x);
 	const bool IsOnGround{ GetGameObject()->GetComponent<ColliderComponent>(ComponentName::collider)->HasTrigger(ColliderTrigger::Bottom)};
 	const bool isIdle{ m_CurrentMoveStateY == m_pIdleMoveStateY };
@@ -94,6 +95,18 @@ void StateComponent::SetLifeState(LifeState* pState) noexcept(false)
 	if (m_DidLifeStateChange)
 	{
 		m_CurrentLifeState = pState;
+	}
+}
+
+void StateComponent::SetWeaponState(WeaponState* pState) noexcept(false)
+{
+#ifdef _DEBUG
+	if (pState == nullptr)
+		throw std::runtime_error(std::string("StateComponent::SetCurrentState pState was a nullptr"));
+#endif // _DEBUG
+	if (m_CurrentWeaponState != pState)
+	{
+		m_CurrentWeaponState = pState;
 	}
 }
 
