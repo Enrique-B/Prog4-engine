@@ -15,6 +15,7 @@ Fried::SceneManager::~SceneManager()
 	}
 }
 
+
 void Fried::SceneManager::AddUIScene(Scene* pScene, UI uiType) noexcept(false)
 {
 	if (m_pUIScenes[unsigned int(uiType)] == nullptr)
