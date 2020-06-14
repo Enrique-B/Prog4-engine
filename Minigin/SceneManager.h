@@ -28,6 +28,7 @@ class Scene;
 		UI GetUI()const noexcept { return m_CurrentUIScene; }
 		Scene* GetNextScene()const noexcept;
 		Scene* GetPreviousScene()const noexcept;
+		Scene* GetCurrentScene()const noexcept { return m_pScenes[m_CurrentScene]; }
 		void Update(float elapsedSec);
 		void CollisionUpdate(float elapsedSec)noexcept;
 		void Render()noexcept;

@@ -116,3 +116,30 @@ public:
 
 	void Execute();
 };
+
+class SinglePlayerCommand : public Command
+{
+public:
+	SinglePlayerCommand() : Command(nullptr) {};
+	SinglePlayerCommand(const SinglePlayerCommand& other) = delete;
+	SinglePlayerCommand(SinglePlayerCommand&& other) = delete;
+	SinglePlayerCommand& operator=(const SinglePlayerCommand& other) = delete;
+	SinglePlayerCommand& operator=(SinglePlayerCommand&& other) = delete;
+	~SinglePlayerCommand() = default;
+
+	void Execute();
+};
+
+class CoopCommand : public Command
+{
+public:
+	CoopCommand() : Command(nullptr) {};
+	CoopCommand(const CoopCommand& other) = delete;
+	CoopCommand(CoopCommand&& other) = delete;
+	CoopCommand& operator=(const CoopCommand& other) = delete;
+	CoopCommand& operator=(CoopCommand&& other) = delete;
+	~CoopCommand() = default;
+
+	void Execute();
+};
+

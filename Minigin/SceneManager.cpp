@@ -15,7 +15,6 @@ Fried::SceneManager::~SceneManager()
 	}
 }
 
-
 void Fried::SceneManager::AddUIScene(Scene* pScene, UI uiType) noexcept(false)
 {
 	if (m_pUIScenes[unsigned int(uiType)] == nullptr)
@@ -95,7 +94,7 @@ void Fried::SceneManager::DeactivateNonActiveGameObjects() noexcept(false)
 }
 
 Fried::SceneManager::SceneManager()
-	: m_CurrentScene{ 0 }, m_IsRenderingCollision(false), m_CurrentUIScene{ UI::GameMenu }
+	: m_CurrentScene{ 0 }, m_IsRenderingCollision(false), m_CurrentUIScene{ UI::StartMenu }
 {
 	m_pUIScenes.push_back(nullptr);
 	m_pUIScenes.push_back(nullptr);

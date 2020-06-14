@@ -4,6 +4,8 @@
 #include "Scene.h"
 #include "GameObject.h"
 #include "CharacterComponent.h"
+#include "SceneManager.h"
+#include "TextComponent.h"
 
 Observer::Observer(Fried::Scene* pScene)noexcept
 	:m_pScene{pScene}
@@ -44,15 +46,12 @@ void EnemyObserver::SetAmountOfEnemies(int amountOfEnemies) noexcept
 PlayerObserver::PlayerObserver(Fried::Scene* pScene) noexcept
 	:Observer(pScene), m_LivesPlayer1{4}, m_LivesPlayer2{ 4 }
 {
-
 }
 
 void PlayerObserver::Notify(Event event, GameObject* pObject)noexcept
 {
 	switch (event)
 	{
-	case Event::EnemyDeath:
-		break;
 	case Event::PlayerDeath:
 		if (pObject->HasComponent(ComponentName::Character))
 		{
@@ -62,7 +61,28 @@ void PlayerObserver::Notify(Event event, GameObject* pObject)noexcept
 			{
 				pObject->SetIsActive(false);
 			}
-			pChar->GetCharacterNumber() == 0 ? m_LivesPlayer1 = amountOfLives : m_LivesPlayer2 = amountOfLives;
+			Fried::SceneManager* pSceneManager = Fried::SceneManager::GetInstance();
+			Fried::Scene* pScene = pSceneManager->GetUIScene(Fried::SceneManager::UI::GameMenu);
+			std::vector<GameObject*>children = pScene->GetChildren();
+			size_t size = children.size();
+			std::vector<TextComponent*>texts;
+			for (size_t i = 0; i < size; i++)
+			{
+				if (children[i]->HasComponent(ComponentName::Text) && !children[i]->HasComponent(ComponentName::Score))
+				{
+					texts.push_back(children[i]->GetComponent<TextComponent>(ComponentName::Text));
+				}
+			}
+			if (pChar->GetCharacterNumber() == 0)
+			{
+				m_LivesPlayer1 = amountOfLives;
+				texts[1]->SetText(std::to_string(amountOfLives));
+			}
+			else
+			{
+				m_LivesPlayer2 = amountOfLives;
+				texts[2]->SetText(std::to_string(amountOfLives));
+			}			
 			std::cout << "Player1Lives:  " << m_LivesPlayer1 << "Player2Lives " << m_LivesPlayer2 << " \n";
 		}
 		break;

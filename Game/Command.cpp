@@ -2,16 +2,16 @@
 #include "Command.h"
 #include "GameObject.h"
 #include "StateComponent.h"
-#include <iostream>
 #include "SceneManager.h"
 #include "StateManager.h"
 #include "../Game/BaseState.h"
 #include "SpriteComponent.h"
 #include "ColliderComponent.h"
-#include "BubbleManager.h"
 #include "TransformComponent.h"
-#include "Scene.h"
 #include "BubbleComponent.h"
+#include "BubbleManager.h"
+#include "Scene.h"
+#include <iostream>
 
 JumpCommand::JumpCommand(GameObject* pObject)
 	:Command(pObject){}
@@ -143,12 +143,75 @@ void PauseCommand::Execute()
 {
 	Fried::SceneManager* pManager = Fried::SceneManager::GetInstance();
 	Fried::SceneManager::UI UI = pManager->GetUI();
-	if (UI == Fried::SceneManager::UI::PauseMenu)
+	switch (UI)
+	{
+	case Fried::SceneManager::UI::GameMenu:
+		pManager->SetUIScene(Fried::SceneManager::UI::PauseMenu);
+		break;
+	case Fried::SceneManager::UI::PauseMenu:
+		pManager->SetUIScene(Fried::SceneManager::UI::GameMenu);
+		break;
+	default:
+		break;
+	}
+}
+
+void SinglePlayerCommand::Execute()
+{
+	Fried::SceneManager* pManager = Fried::SceneManager::GetInstance();
+	Fried::SceneManager::UI UI = pManager->GetUI();
+	if (UI == Fried::SceneManager::UI::StartMenu)
 	{
 		pManager->SetUIScene(Fried::SceneManager::UI::GameMenu);
+		Fried::Scene* currentscene = pManager->GetCurrentScene();
+		std::vector<GameObject*> pCharacters; 
+		std::vector<GameObject*> pGameObjects = currentscene->GetChildren();
+		size_t size{ pGameObjects.size() };
+		for (size_t i = 1; i < size; i++)
+		{
+			if (pGameObjects[i]->HasComponent(ComponentName::Character))
+			{
+				pCharacters.push_back(pGameObjects[i]);
+			}
+		}
+		pCharacters[1]->GetComponent<StateComponent>(ComponentName::State)->
+			SetLifeState(Fried::StateManager::GetInstance()->GetLifeState("DeathState"));
+		pCharacters[1]->SetIsActive(false);
+		Fried::Scene* UIscene = pManager->GetUIScene(Fried::SceneManager::UI::GameMenu);
+		const std::vector<GameObject*> UIChildren = UIscene->GetChildren();
+		size = UIChildren.size();
+		size_t amount = 0;
+		size_t amount2 = 0;
+		for (size_t i = 0; i < size; i++)
+		{
+			if (UIChildren[i]->HasComponent(ComponentName::Text) && UIChildren[i]->HasComponent(ComponentName::Texture))
+			{
+				amount++; 
+				if (amount == 2)
+				{
+					UIscene->RemoveGameObject(UIChildren[i]);
+					UIscene->AddGameObjectToNonActive(UIChildren[i]);
+				}
+			}
+			else if (UIChildren[i]->HasComponent(ComponentName::Text))
+			{
+				amount2++; 
+				if (amount2 == 3)
+				{
+					UIscene->RemoveGameObject(UIChildren[i]);
+					UIscene->AddGameObjectToNonActive(UIChildren[i]);
+				}
+			}
+		}
 	}
-	else if (UI == Fried::SceneManager::UI::GameMenu)
+}
+
+void CoopCommand::Execute()
+{
+	Fried::SceneManager* pManager = Fried::SceneManager::GetInstance();
+	Fried::SceneManager::UI UI = pManager->GetUI();
+	if (UI == Fried::SceneManager::UI::StartMenu)
 	{
-		pManager->SetUIScene(Fried::SceneManager::UI::PauseMenu);
+		pManager->SetUIScene(Fried::SceneManager::UI::GameMenu);
 	}
 }
