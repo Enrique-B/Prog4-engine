@@ -54,15 +54,23 @@ namespace Fried
 	class InputManager final : public Singleton<InputManager>
 	{
 	public:
+		InputManager(const InputManager& other) = delete;
+		InputManager(InputManager&& other) = delete;
+		InputManager& operator=(const InputManager& other) = delete;
+		InputManager& operator=(InputManager&& other) = delete;
 		~InputManager();
+
 		bool ProcessInput()noexcept;
 		bool IsControllerButtonPressed(const size_t controllerNumber ,ControllerButton button) const noexcept;
 		bool IsKeyboardButtonPressed(SDL_Scancode scancode)const noexcept;
 		void AddCommand(const Input& input) noexcept(false);
-		void HandleInput();
+		void HandleInput()noexcept;
+		void RemoveAllCommands()noexcept;
 	private:
-		XINPUT_STATE m_CurrentState[MaxNumbersOfControllers];
+		friend class Singleton<InputManager>;
+		InputManager() = default;
+		XINPUT_STATE m_CurrentState[MaxNumbersOfControllers]{};
 		std::vector<Input> m_CommandVector;
-		const Uint8* keyboardState;
+		const Uint8* keyboardState{};
 	};
 }

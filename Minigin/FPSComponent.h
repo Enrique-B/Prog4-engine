@@ -6,7 +6,11 @@ class FPSComponent final : public BaseComponent
 {
 public:
     FPSComponent()noexcept;
-    ~FPSComponent();
+    FPSComponent(const FPSComponent& other) = delete;
+    FPSComponent(FPSComponent&& other) = delete;
+    FPSComponent& operator=(const FPSComponent& other) = delete;
+    FPSComponent& operator=(FPSComponent&& other) = delete;
+    ~FPSComponent()=default;
 
     virtual void Initialize()noexcept(false) override;
     virtual void Update(float elapsedSec)noexcept;

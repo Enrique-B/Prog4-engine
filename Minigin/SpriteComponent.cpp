@@ -50,7 +50,6 @@ void SpriteComponent::Update(float elapsedSec)noexcept
 		m_IsAnimtionFinished = true;
 		m_ResourceRect.x = static_cast<int>(m_AnimationFrames * m_FrameWidht);
 	}
-
 }
 
 void SpriteComponent::Render(const Fried::float2& pos) const noexcept
@@ -81,5 +80,10 @@ void SpriteComponent::SetFrame(int number)
 void SpriteComponent::SetMaxedFrames(int maxFrames)
 {
 	m_MaxFrames = maxFrames;
+}
+
+void SpriteComponent::SetTexture(const std::string& fileName)
+{
+	m_pTexture = Fried::ResourceManager::GetInstance()->LoadTexture(fileName);
 }
 

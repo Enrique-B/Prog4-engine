@@ -5,7 +5,7 @@ class Font;
 class TextComponent final : public BaseComponent
 {
 public:
-	explicit TextComponent(const std::string& text, const std::string& fileName, unsigned int size)noexcept;
+	explicit TextComponent(const std::string& text, const std::string& fileName, unsigned int size) noexcept;
 	virtual  ~TextComponent();
 	TextComponent(const TextComponent& other) = delete;
 	TextComponent(TextComponent&& other) = delete;

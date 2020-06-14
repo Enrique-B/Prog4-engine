@@ -5,6 +5,13 @@ namespace Fried
 	class Minigin
 	{
 	public:
+		Minigin() = default;
+		Minigin(const Minigin& other) = delete;
+		Minigin(Minigin&& other) = delete;
+		Minigin& operator=(const Minigin& other) = delete;
+		Minigin& operator=(Minigin&& other) = delete;
+		~Minigin() = default;
+
 		void Initialize();
 		void Cleanup();
 		void Run();
@@ -12,6 +19,5 @@ namespace Fried
 		virtual void LoadGame() = 0;
 	private:
 		SDL_Window* m_Window{};
-		static const int MsPerFrame = 60; //16 for 60 fps, 33 for 30 fps
 	};
 }

@@ -9,25 +9,22 @@
 #include "SpriteComponent.h"
 #include "BubbleComponent.h"
 
-CharacterComponent::CharacterComponent()
+CharacterComponent::CharacterComponent(unsigned int characterNumber)
 	: m_IsDead{false}
 	, m_IsInvincable{false}
 	, m_AmountOfSecBeforeReset{2}
 	, m_AmountOfSecOfInvincability{3}
 	, m_AmountOfLives{3}
+	, m_CharacterNumber{ characterNumber }
 {
 	SetComponentName(ComponentName::Character);
-}
-
-CharacterComponent::~CharacterComponent()
-{
 }
 
 void CharacterComponent::Update(float elapsedSec) noexcept
 {
 	Fried::StateManager* pStateManager = Fried::StateManager::StateManager::GetInstance();
 	GameObject* pObject = GetGameObject();
-	StateComponent* pState = pObject->GetComponent<StateComponent>(ComponentName::state);
+	StateComponent* pState = pObject->GetComponent<StateComponent>(ComponentName::State);
 	SpriteComponent* pSprite = pObject->GetComponent<SpriteComponent>(ComponentName::Sprite);
 
 	UNREFERENCED_PARAMETER(elapsedSec);
@@ -45,7 +42,7 @@ void CharacterComponent::Update(float elapsedSec) noexcept
 			// insert random number for reset 
 			m_AmountOfSecBeforeReset = 2; 
 			--m_AmountOfLives;
-			if (m_AmountOfLives >= 0)
+			//if (m_AmountOfLives >= 0)
 			{
 				Reset();
 			}
@@ -62,11 +59,9 @@ void CharacterComponent::Update(float elapsedSec) noexcept
 			pSprite->SetDestRectY(0);
 			// spauwn bubble
 			pState->SetWeaponState(pStateManager->GetWeaponState("WeaponStateNone"));
-			MakeBubble();
-
+			//MakeBubble();
 		}
-
-		ColliderComponent* pCollider = pObject->GetComponent<ColliderComponent>(ComponentName::collider);
+		ColliderComponent* pCollider = pObject->GetComponent<ColliderComponent>(ComponentName::Collider);
 		if (m_IsInvincable)
 		{
 			m_AmountOfSecOfInvincability -= elapsedSec;
@@ -78,7 +73,7 @@ void CharacterComponent::Update(float elapsedSec) noexcept
 			}
 		}
 		// set dying state here 
-		else if (pCollider->HasTrigger(ColliderTrigger::PlayerHit))
+		else if (pCollider->HasTrigger(ColliderTrigger::Player))
 		{
 			// set the death state here 
 			// Set the not move state here 
@@ -95,8 +90,9 @@ void CharacterComponent::Reset()
 {
 	// give position here 
 	const int spriteWidth{ 16 };
-	GetGameObject()->GetTransform()->SetPosition(spriteWidth * 3, spriteWidth * 33 + 40);
-	StateComponent* pState = GetGameObject()->GetComponent<StateComponent>(ComponentName::state);
+	TransformComponent* pTransform = GetGameObject()->GetTransform();
+	pTransform->SetPosition(pTransform->GetResetPosition());
+	StateComponent* pState = GetGameObject()->GetComponent<StateComponent>(ComponentName::State);
 	Fried::StateManager* pStateManager = Fried::StateManager::StateManager::GetInstance();
 	pState->SetLifeState(pStateManager->GetLifeState("InvincibleState"));
 	pState->SetMoveStateY(pStateManager->GetMoveStateY("MoveStateYIdle"));
@@ -106,23 +102,4 @@ void CharacterComponent::Reset()
 	pSprite->SetDestRectY(0);
 	pSprite->SetUpdate(true);
 	m_IsDead = false;
-}
-
-void CharacterComponent::MakeBubble()
-{
-	GameObject * thisObject = GetGameObject(); 
-	SpriteComponent* pThisSprite = thisObject->GetComponent<SpriteComponent>(ComponentName::Sprite);
-	ColliderComponent* pThisCollider = thisObject->GetComponent<ColliderComponent>(ComponentName::collider);
-	const bool isGoingRight{ !pThisSprite->GetIsGoingLeft() };
-	GameObject* pBubble = new GameObject{};
-	const int spriteWidth{ 16 };
-	const float offset{1.5f};
-	Fried::float2 pos{ thisObject->GetTransform()->GetPosition()};
-	pos.x += isGoingRight ? pThisCollider->GetCollisionRect().w + offset : -offset - spriteWidth * 2;
-	pBubble->AddComponent(new ColliderComponent{ SDL_Rect{int(pos.x) ,int(pos.y), spriteWidth * 2, spriteWidth * 2}, false });
-	pBubble->AddComponent(new SpriteComponent(4, 4, spriteWidth, spriteWidth, "bubbles.png", spriteWidth * 2 , spriteWidth * 2));
-	pBubble->AddComponent(new StateComponent{});
-	pBubble->AddComponent(new BubbleComponent{ isGoingRight });
-	pBubble->GetTransform()->SetPosition(pos);
-	thisObject->GetScene()->AddGameObject(pBubble);
 }

@@ -7,6 +7,9 @@
     <Filter Include="Command">
       <UniqueIdentifier>{87734c83-f578-4f08-9d71-3b0bb507ee32}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Observer">
+      <UniqueIdentifier>{bbdefe5c-8463-404c-841f-013b631bdf16}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FriedEngine.cpp" />
@@ -17,6 +20,12 @@
     <ClCompile Include="Command.cpp">
       <Filter>Command</Filter>
     </ClCompile>
+    <ClCompile Include="Observer.cpp">
+      <Filter>Observer</Filter>
+    </ClCompile>
+    <ClCompile Include="Subject.cpp">
+      <Filter>Observer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FriedEngine.h" />
@@ -25,6 +34,12 @@
     </ClInclude>
     <ClInclude Include="Command.h">
       <Filter>Command</Filter>
+    </ClInclude>
+    <ClInclude Include="Observer.h">
+      <Filter>Observer</Filter>
+    </ClInclude>
+    <ClInclude Include="Subject.h">
+      <Filter>Observer</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

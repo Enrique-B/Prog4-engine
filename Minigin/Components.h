@@ -8,3 +8,7 @@
 #include "TextureComponent.h"
 #include "ColliderComponent.h"
 #include "EnemyComponent.h"
+#include "BubbleComponent.h"
+#include "CharacterComponent.h"
+#include "ItemComponent.h"
+#include "ScoreComponent.h"

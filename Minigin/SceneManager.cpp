@@ -2,34 +2,25 @@
 #include "SceneManager.h"
 #include "Scene.h"
 
-void Fried::SceneManager::Update(float elapsedSec)
-{
-	m_pScenes[m_CurrentScene]->Update(elapsedSec);
-}
-
-void Fried::SceneManager::CollisionUpdate(float elapsedSec)noexcept
-{
-	m_pScenes[m_CurrentScene]->CollisionUpdate(elapsedSec);
-}
-
-void Fried::SceneManager::Render()noexcept
-{
-	m_pScenes[m_CurrentScene]->Render();
-	if (m_IsRenderingCollision)
-		m_pScenes[m_CurrentScene]->RenderCollision();
-}
-
-void Fried::SceneManager::DeactivateNonActiveGameObjects() noexcept(false)
-{
-	m_pScenes[m_CurrentScene]->DeactivateNonActiveGameObjects();
-}
-
 Fried::SceneManager::~SceneManager()
 {
-	const size_t size{ m_pScenes.size() };
+	size_t size{ m_pScenes.size() };
 	for (size_t i = 0; i < size; i++)
 	{
 		SafeDelete(m_pScenes[i]);
+	}
+	size = m_pUIScenes.size();
+	for (size_t i = 0; i < size; i++)
+	{
+		SafeDelete(m_pUIScenes[i]);
+	}
+}
+
+void Fried::SceneManager::AddUIScene(Scene* pScene, UI uiType) noexcept(false)
+{
+	if (m_pUIScenes[unsigned int(uiType)] == nullptr)
+	{
+		m_pUIScenes[unsigned int(uiType)] = pScene;
 	}
 }
 
@@ -51,17 +42,18 @@ void Fried::SceneManager::AddScene(Fried::Scene* pScene)
 
 void Fried::SceneManager::NextScene()noexcept
 {
-	m_CurrentScene++; 
-	if (m_CurrentScene > m_pScenes.size()-1)
+	m_CurrentScene++;
+	if (m_CurrentScene > m_pScenes.size() - 1)
 		m_CurrentScene = 0;
 #ifdef _DEBUG
 	std::cout << m_CurrentScene << std::endl;
 #endif // _DEBUG
 }
 
+
 Fried::Scene* Fried::SceneManager::GetNextScene()noexcept
 {
-	if (m_CurrentScene +1 > m_pScenes.size() - 1)
+	if (m_CurrentScene + 1 > m_pScenes.size() - 1)
 		return nullptr;
 	return m_pScenes[m_CurrentScene + 1];
 }
@@ -71,4 +63,42 @@ Fried::Scene* Fried::SceneManager::GetPreviousScene()noexcept
 	if (m_CurrentScene - 1 < 0)
 		return nullptr;
 	return m_pScenes[m_CurrentScene - 1];
+}
+
+void Fried::SceneManager::Update(float elapsedSec)
+{
+	if (m_CurrentUIScene == UI::GameMenu)
+		m_pScenes[m_CurrentScene]->Update(elapsedSec);
+	m_pUIScenes[unsigned int(m_CurrentUIScene)]->Update(elapsedSec);
+}
+
+void Fried::SceneManager::CollisionUpdate(float elapsedSec)noexcept
+{
+	if (m_CurrentUIScene == UI::GameMenu)
+		m_pScenes[m_CurrentScene]->CollisionUpdate(elapsedSec);
+}
+
+void Fried::SceneManager::Render()noexcept
+{
+	if (m_CurrentUIScene == UI::GameMenu)
+	{
+		m_pScenes[m_CurrentScene]->Render();
+		if (m_IsRenderingCollision)
+			m_pScenes[m_CurrentScene]->RenderCollision();
+	}
+	m_pUIScenes[unsigned int(m_CurrentUIScene)]->Render();
+}
+
+void Fried::SceneManager::DeactivateNonActiveGameObjects() noexcept(false)
+{
+	m_pScenes[m_CurrentScene]->DeactivateNonActiveGameObjects();
+}
+
+Fried::SceneManager::SceneManager()
+	: m_CurrentScene{ 0 }, m_IsRenderingCollision(false), m_CurrentUIScene{ UI::GameMenu }
+{
+	m_pUIScenes.reserve(3);
+	m_pUIScenes.push_back(nullptr);
+	m_pUIScenes.push_back(nullptr);
+	m_pUIScenes.push_back(nullptr);
 }

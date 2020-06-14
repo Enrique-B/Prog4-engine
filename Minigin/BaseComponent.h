@@ -6,17 +6,19 @@ namespace Fried
 
 enum class ComponentName
 {
-	Base = 0,
-	TransFrom = 1,
-	Texture = 2,
-	Text = 3,
-	FPS = 4,
-	Sprite = 5,
-	state = 6,
-	collider = 7,
-	enemy = 8,
-	bubble,
-	Character
+	Base,
+	TransFrom,
+	Texture,
+	Text,
+	FPS,
+	Sprite,
+	State,
+	Collider,
+	Enemy,
+	Bubble,
+	Character,
+	Score,
+	Item
 };
 class GameObject;
 class BaseComponent

@@ -3,10 +3,16 @@
 class ColliderComponent;
 class StateComponent;
 
-class EnemyComponent : public BaseComponent
+class EnemyComponent final: public BaseComponent
 {
 public: 
 	EnemyComponent(unsigned char enemyType, const float amountOfSecIdle, bool islookingleft)noexcept;
+	EnemyComponent(const EnemyComponent& other) = delete;
+	EnemyComponent(EnemyComponent&& other) = delete;
+	EnemyComponent& operator=(const EnemyComponent& other) = delete;
+	EnemyComponent& operator=(EnemyComponent&& other) = delete;
+	~EnemyComponent() = default;
+
 	virtual void Update(float elapsedSec) override;
 	virtual void Initialize()override;
 	unsigned char GetEnemyType()const noexcept { return m_EnemyType; }

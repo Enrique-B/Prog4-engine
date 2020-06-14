@@ -179,7 +179,7 @@ void Fried::InputManager::AddCommand(const Input& input)
 	m_CommandVector.push_back(input);
 }
 
-void Fried::InputManager::HandleInput()
+void Fried::InputManager::HandleInput()noexcept
 {
 	const size_t size{m_CommandVector.size()};
 	for (size_t i = 0; i < size; i++)
@@ -234,4 +234,9 @@ void Fried::InputManager::HandleInput()
 			}
 		}
 	}
+}
+
+void Fried::InputManager::RemoveAllCommands()noexcept
+{
+	m_CommandVector.clear();
 }

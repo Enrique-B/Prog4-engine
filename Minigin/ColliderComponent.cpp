@@ -9,7 +9,7 @@ ColliderComponent::ColliderComponent(const SDL_Rect& collisionRect, bool isStati
 	:m_ColissionRect{collisionRect}
 	, m_IsStatic{isStatic}
 {
-	SetComponentName(ComponentName::collider);
+	SetComponentName(ComponentName::Collider);
 	if (!m_IsStatic)
 		AddLines();
 }
@@ -55,10 +55,6 @@ void ColliderComponent::SetTrigger(ColliderTrigger trigger) noexcept
 	if (trigger == ColliderTrigger::None) // resetting the trigger
 	{
 		ColliderTrigger noneTrigger{ ColliderTrigger::None };
-		if (HasTrigger(ColliderTrigger::Teleport))
-		{
-			noneTrigger = ColliderTrigger(temp | trigger);
-		}
 		while (!m_Trigger.compare_exchange_weak(temp, noneTrigger)) {}
 		return;
 	}
@@ -89,6 +85,10 @@ void ColliderComponent::AddLines()
 	m_Lines.push_back(CollisionLine(line, ColliderTrigger(ColliderTrigger::Bottom)));
 	line = Fried::line{ middlePoint.x, middlePoint.y,float(m_ColissionRect.x + m_ColissionRect.w - 2) , middlePoint.y + height2}; // bottom
 	m_Lines.push_back(CollisionLine(line, ColliderTrigger(ColliderTrigger::Bottom)));
+
+	line = Fried::line{ middlePoint.x, middlePoint.y,middlePoint.x , middlePoint.y - height2 }; // top
+	m_Lines.push_back(CollisionLine(line, ColliderTrigger(ColliderTrigger::Top)));
+
 }
 
 void ColliderComponent::Initialize()noexcept

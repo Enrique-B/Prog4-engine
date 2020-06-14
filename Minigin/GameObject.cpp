@@ -1,12 +1,14 @@
 #include "MiniginPCH.h"
 #include "GameObject.h"
-#include "ResourceManager.h"
+#include "Scene.h"
 #include "Renderer.h"
 #include "Components.h"
+#include "../Game/Subject.h"
 
 GameObject::GameObject()
 	:m_IsActive{true}
 	,m_pScene{nullptr}
+	, m_pSubject{ new Subject{} }
 {
 	m_pTranform = new TransformComponent{};
 	m_pComponents.push_back(m_pTranform);
@@ -20,6 +22,17 @@ GameObject::~GameObject()
 	{
 		SafeDelete(m_pComponents[i]);
 	}
+	SafeDelete(m_pSubject);
+}
+
+void GameObject::Initialize()noexcept(false)
+{
+	const size_t size{ m_pComponents.size() };
+	for (size_t i = 0; i < size; i++)
+	{
+		m_pComponents[i]->Initialize();
+	}
+	m_pSubject->AddObserver(m_pScene->GetObserver());
 }
 
 void GameObject::Update(float elapsedSec)
@@ -47,7 +60,7 @@ void GameObject::Render() const noexcept
 
 void GameObject::RenderCollision() const noexcept
 {
-	if (!m_IsActive)
+	if (!m_IsActive.load())
 		return;
 	const size_t size{ m_pComponents.size() };
 	for (size_t i = 0; i < size; i++)
@@ -79,7 +92,7 @@ void GameObject::AddComponent(BaseComponent* pComponent)
 
 bool GameObject::HasComponent(ComponentName name) const noexcept
 {
-	for (auto component : m_pComponents)
+	for (const auto& component : m_pComponents)
 	{
 		if (component->GetComponentName() == name)
 		{
@@ -91,14 +104,8 @@ bool GameObject::HasComponent(ComponentName name) const noexcept
 
 void GameObject::SetIsActive(bool isActive)
 {
-	m_IsActive = isActive;
+	bool temp{ m_IsActive.load() };
+	bool expected{ isActive };
+	while (!m_IsActive.compare_exchange_weak(temp, expected)) {}
 }
 
-void GameObject::Initialize()noexcept(false)
-{
-	const size_t size{m_pComponents.size()};
-	for (size_t i = 0; i < size; i++)
-	{
-		m_pComponents[i]->Initialize();
-	}
-}

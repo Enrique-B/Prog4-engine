@@ -7,6 +7,11 @@
 #include "StateManager.h"
 #include "../Game/BaseState.h"
 #include "SpriteComponent.h"
+#include "ColliderComponent.h"
+#include "BubbleManager.h"
+#include "TransformComponent.h"
+#include "Scene.h"
+#include "BubbleComponent.h"
 
 JumpCommand::JumpCommand(GameObject* pObject)
 	:Command(pObject){}
@@ -16,14 +21,18 @@ void JumpCommand::Execute()
 	Fried::StateManager* pStateManager = Fried::StateManager::GetInstance();
 	MoveStateY* pJump = pStateManager->GetMoveStateY("JumpState");
 	WeaponState* pShootBubble = pStateManager->GetWeaponState("WeaponStateShootBubble");
-	StateComponent* pStat = m_pObject->GetComponent<StateComponent>(ComponentName::state);
-	pStat->SetMoveStateY(pJump);
-	SpriteComponent* pSprite = m_pObject->GetComponent<SpriteComponent>(ComponentName::Sprite);
-	if (pShootBubble != pStat->GetWeaponState())
+	StateComponent* pStat = m_pObject->GetComponent<StateComponent>(ComponentName::State);
+	ColliderComponent * pCollider = m_pObject->GetComponent<ColliderComponent>(ComponentName::Collider);
+	if (pCollider->HasTrigger(ColliderTrigger::Bottom))
 	{
-		pSprite->SetFrame(1);
+		pStat->SetMoveStateY(pJump);
+		SpriteComponent* pSprite = m_pObject->GetComponent<SpriteComponent>(ComponentName::Sprite);
+		if (pShootBubble != pStat->GetWeaponState())
+		{
+			pSprite->SetFrame(1);
+		}
+		pSprite->SetMaxedFrames(2);
 	}
-	pSprite->SetMaxedFrames(2);
 }
 
 MoveLeftCommand::MoveLeftCommand(GameObject* pObject)
@@ -32,7 +41,7 @@ MoveLeftCommand::MoveLeftCommand(GameObject* pObject)
 void MoveLeftCommand::Execute()
 {
 	MoveStateX* pTemp = Fried::StateManager::GetInstance()->GetMoveStateX("MoveLeftState");
-	StateComponent* pState = m_pObject->GetComponent<StateComponent>(ComponentName::state);
+	StateComponent* pState = m_pObject->GetComponent<StateComponent>(ComponentName::State);
 	pState->SetMoveStateX(pTemp);
 	SpriteComponent* pSprite = m_pObject->GetComponent<SpriteComponent>(ComponentName::Sprite); 
 	if (pState->GetLifeState() != Fried::StateManager::GetInstance()->GetLifeState("DeathState"))
@@ -49,7 +58,7 @@ MoveRightCommand::MoveRightCommand(GameObject* pObject)
 void MoveRightCommand::Execute()
 {
 	MoveStateX* pTemp = Fried::StateManager::GetInstance()->GetMoveStateX("MoveRightState");
-	StateComponent* pState = m_pObject->GetComponent<StateComponent>(ComponentName::state);
+	StateComponent* pState = m_pObject->GetComponent<StateComponent>(ComponentName::State);
 	pState->SetMoveStateX(pTemp);
 	SpriteComponent* pSprite = m_pObject->GetComponent<SpriteComponent>(ComponentName::Sprite);
 	if (pState->GetLifeState() != Fried::StateManager::GetInstance()->GetLifeState("DeathState"))
@@ -68,12 +77,12 @@ void ReleaseMovementCommand::Execute()
 	Fried::StateManager* pStateManager{ Fried::StateManager::GetInstance() };
 	MoveStateX* pTemp = pStateManager->GetMoveStateX("MoveStateXIdle");
 	WeaponState* pShootingState = pStateManager->GetWeaponState("WeaponStateShootBubble");
-	m_pObject->GetComponent<StateComponent>(ComponentName::state)->SetMoveStateX(pTemp);
+	m_pObject->GetComponent<StateComponent>(ComponentName::State)->SetMoveStateX(pTemp);
 	SpriteComponent* pSprite = m_pObject->GetComponent<SpriteComponent>(ComponentName::Sprite);
-	StateComponent* pState = m_pObject->GetComponent<StateComponent>(ComponentName::state);
+	StateComponent* pState = m_pObject->GetComponent<StateComponent>(ComponentName::State);
 	if (pState->GetWeaponState() != pShootingState && pState->GetLifeState() != pStateManager->GetLifeState("DeathState"))
 	{
-		pSprite->SetFrame(1);
+		pSprite->SetFrame(0);
 		pSprite->SetMaxedFrames(2);
 		pSprite->SetUpdate(false);
 	}
@@ -86,7 +95,7 @@ void ShootBubbleCommand::Execute()
 {
 	Fried::StateManager* pStateManager = Fried::StateManager::GetInstance();
 	WeaponState* pShootingState = pStateManager->GetWeaponState("WeaponStateShootBubble");
-	StateComponent* pState = m_pObject->GetComponent<StateComponent>(ComponentName::state);
+	StateComponent* pState = m_pObject->GetComponent<StateComponent>(ComponentName::State);
 	if (pState->GetWeaponState() != pShootingState && pState->GetLifeState() != pStateManager->GetLifeState("DeathState"))
 	{
 		pState->SetWeaponState(pShootingState);
@@ -95,6 +104,21 @@ void ShootBubbleCommand::Execute()
 		pSprite->SetFrame(0);
 		pSprite->SetDestRectY(32);
 		pSprite->SetMaxedFrames(2);
+
+		GameObject* pBubble = Fried::BubbleManager::GetInstance()->GetBubble();
+		if (pBubble != nullptr)
+		{
+			ColliderComponent* pThisCollider = m_pObject->GetComponent<ColliderComponent>(ComponentName::Collider);
+			bool isGoingRight = !pSprite->GetIsGoingLeft();
+			pBubble->GetComponent<BubbleComponent>(ComponentName::Bubble)->SetGoingRight(isGoingRight);
+			pBubble->GetComponent<SpriteComponent>(ComponentName::Sprite)->SetDestRectY(0);
+			const float offset{ 3 };
+			const int collisionWidth{ 24 * 2 };
+			Fried::float2 pos{ m_pObject->GetTransform()->GetPosition() };
+			pos.x += isGoingRight ? pThisCollider->GetCollisionRect().w + offset : -offset - collisionWidth;
+			pBubble->GetTransform()->SetResetPosition(pos);
+			m_pObject->GetScene()->AddGameObject(pBubble);
+		}
 	}
 }
 

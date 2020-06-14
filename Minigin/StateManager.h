@@ -11,7 +11,10 @@ namespace Fried
 	class StateManager : public Singleton<StateManager>
 	{
 	public:
-		StateManager() = default;
+		StateManager(const StateManager& other) = delete;
+		StateManager(StateManager&& other) = delete;
+		StateManager& operator=(const StateManager& other) = delete;
+		StateManager& operator=(StateManager&& other) = delete;
 		~StateManager();
 		LifeState* GetLifeState(const std::string& stateName)const;
 		MoveStateX* GetMoveStateX(const std::string& stateName)const;
@@ -24,6 +27,9 @@ namespace Fried
 		void AddWeaponState(WeaponState* pWeaponState);
 
 	private: 
+		friend class Singleton<StateManager>;
+		StateManager() = default;
+
 		std::unordered_map<std::string, LifeState*> m_pLifeStates;
 		std::unordered_map<std::string, MoveStateX*> m_pMoveStateX;
 		std::unordered_map<std::string, MoveStateY*> m_pMoveStateY;

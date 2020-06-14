@@ -1,7 +1,8 @@
 #pragma once
 #include <unordered_map>
 #include "BaseComponent.h"
-
+#include <atomic>
+class Subject;
 class TransformComponent;
 namespace Fried
 {
@@ -11,7 +12,7 @@ class GameObject final
 {
 public:
 	GameObject();
-	virtual ~GameObject();
+	~GameObject();
 	GameObject(const GameObject& other) = delete;
 	GameObject(GameObject&& other) = delete;
 	GameObject& operator=(const GameObject& other) = delete;
@@ -50,9 +51,11 @@ public:
 	Fried::Scene* GetScene()const { return m_pScene; };
 	void SetScene(Fried::Scene* pScene)noexcept { m_pScene = pScene; }
 	void Initialize()noexcept(false);
+	Subject* GetSubject()const noexcept { return m_pSubject; }
 private:
-	bool m_IsActive;
+	std::atomic<bool> m_IsActive;
 	std::vector<BaseComponent*>m_pComponents;
 	TransformComponent* m_pTranform;
 	Fried::Scene* m_pScene;
+	Subject* m_pSubject;
 };

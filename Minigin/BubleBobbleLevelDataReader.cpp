@@ -6,6 +6,8 @@
 #include "Components.h"
 #include "CharacterComponent.h"
 #include "Structs.h"
+#include "BubbleManager.h"
+#include "../Game/Observer.h"
 #include <sstream>
 
 BubleBobbleLevelDataReader::BubleBobbleLevelDataReader()
@@ -31,23 +33,14 @@ union Byte //http://www.cplusplus.com/forum/general/97378/
 	B b;
 };
 
-void BubleBobbleLevelDataReader::Read()
+void BubleBobbleLevelDataReader::Read()noexcept
 {
 	ReadLevelData();
 	ReadEnemyData();
-	auto pObject = new GameObject{};
-	pObject->AddComponent(new ColliderComponent{ SDL_Rect{0,0,m_DestBlockWidth * 2,m_DestBlockWidth * 2},false });
-	pObject->AddComponent(new StateComponent());
-	const int spriteWidth{ 16 };
-	SpriteComponent* pSprite = new SpriteComponent{ 4, 4, spriteWidth,spriteWidth, "heroGreen.png",m_DestBlockWidth * 2,m_DestBlockWidth * 2 };
-	pSprite->SetUpdate(false);
-	pObject->AddComponent(pSprite);
-	pObject->AddComponent(new CharacterComponent{});
-	pObject->SetPosition(spriteWidth * 3, spriteWidth * 34 + 40);
-	m_Scenes[0]->AddGameObject(pObject);
+	MakeCharacters();
 }
 
-void BubleBobbleLevelDataReader::ReadLevelData()
+void BubleBobbleLevelDataReader::ReadLevelData()noexcept
 {
 	// 1 bit per "cell", one screen consists of 32x25 cells. So 4 bytes for first Row of first level -Koen
 	BinaryReaderWriter* pBinReader{ new BinaryReaderWriter{} };
@@ -113,10 +106,11 @@ void BubleBobbleLevelDataReader::ReadLevelData()
 			}
 			dest.y += m_DestBlockWidth;
 		}
+		ColliderComponent* pTopCollider = new ColliderComponent{ SDL_Rect{m_DestBlockWidth * 2 ,40,m_DestBlockWidth * 28, m_DestBlockWidth}, true };
+		pTopCollider->SetTrigger(ColliderTrigger::Ignore);
+		pObject->AddComponent(pTopCollider);
 		pObject->AddComponent(new ColliderComponent{ SDL_Rect{0,40,m_DestBlockWidth * 2, m_DestBlockWidth *  25}, true });
 		pObject->AddComponent(new ColliderComponent{ SDL_Rect{m_DestBlockWidth * 30,40,m_DestBlockWidth * 2, m_DestBlockWidth * 25}, true });
-		pObject->AddComponent(new TextComponent{ " FPS", "Lingua.otf", 36 });
-		pObject->AddComponent(new FPSComponent{});
 		pObject->GetTransform()->SetPosition(0, 0);
 		pScene->AddGameObject(pObject);
 		m_Scenes.push_back(pScene);
@@ -124,7 +118,7 @@ void BubleBobbleLevelDataReader::ReadLevelData()
 	SafeDelete(pBinReader);
 }
 
-void BubleBobbleLevelDataReader::ReadEnemyData()
+void BubleBobbleLevelDataReader::ReadEnemyData()noexcept
 {
 	BinaryReaderWriter* pBinReader{ new BinaryReaderWriter{} };
 	std::ifstream input{};
@@ -136,17 +130,21 @@ void BubleBobbleLevelDataReader::ReadEnemyData()
 	// comments how to read the enemydata from Nickey
 	// fist byte == 0b00000000 end of level data
 	const int spriteWidth{ 16 };
-	const std::string spriteName{ "../Data/Enemy.png" };
+	const std::string spriteName{ "Enemy.png" };
+	const std::string dropName{ "EnemyDie.png" };
+	int amountOfenemies{};
 	while (!input.eof())
 	{
 		if (temp == 0b00000000)
 		{
+			m_Scenes[levelNumber]->GetObserver()->SetAmountOfEnemies(amountOfenemies);
+			amountOfenemies = 0;
 			levelNumber++;
 			pBinReader->Read(temp, input); // read the reading the "fist byte" again 
 		}	// if not
 		else
 		{
-			GameObject* pObject{ new GameObject{} };
+			GameObject* pEnemy{ new GameObject{} };
 			// read next 2 bytes
 			// in those  3 bytes all the enemy data is in there
 			// 0b00000111 & first byte -> enemy type
@@ -158,7 +156,7 @@ void BubleBobbleLevelDataReader::ReadEnemyData()
 			int row = (0b11111000 & temp) >> 3;
 			const float x{ float(collumn * m_DestBlockWidth) };
 			const float y{ float(row * m_DestBlockWidth + 40 - 3 * m_DestBlockWidth) };
-			pObject->SetPosition(x, y);
+			pEnemy->GetTransform()->SetResetPosition(Fried::float2(x, y));
 			// (0b00000111 & second byte)  bool bits // i'm going to ignore this 
 			pBinReader->Read(temp, input); // read the 3rd byte 
 			// (0b11000000 & third byte) bool bits // i'm also ignoring those 
@@ -167,20 +165,57 @@ void BubleBobbleLevelDataReader::ReadEnemyData()
 			// 7th bit of the 3rd byte is the way they're looking; 
 			bool IsLookingLight = temp & (1 << 7);
 			EnemyComponent* pComp{ new EnemyComponent{enemyType, amountOfFramesIdle, IsLookingLight} };
-			pObject->AddComponent(pComp);
-			pObject->AddComponent(new ColliderComponent{ collisionRect , false });
+			pEnemy->AddComponent(pComp);
+			pEnemy->AddComponent(new ColliderComponent{ collisionRect , false });
 			SpriteComponent* pSprite = new SpriteComponent{ 4, 4, spriteWidth,spriteWidth, spriteName,m_DestBlockWidth * 2,m_DestBlockWidth * 2 };
 			pSprite->SetDestRectY(float(enemyType * spriteWidth));
-			pObject->AddComponent(pSprite);
-			pObject->AddComponent(new StateComponent{});
-			m_Scenes[levelNumber]->AddGameObject(pObject);
+			pEnemy->AddComponent(pSprite);
+			pEnemy->AddComponent(new StateComponent{});
+			m_Scenes[levelNumber]->AddGameObject(pEnemy);
+			GameObject* pDrop{ new GameObject };
+			pDrop->AddComponent(new ColliderComponent{ collisionRect , false });
+			pDrop->AddComponent(new ItemComponent{ enemyType });
+			pDrop->AddComponent(new ScoreComponent{ enemyType });
+			pDrop->AddComponent(new StateComponent{});
+			pSprite = new SpriteComponent{4,4,spriteWidth,spriteWidth,dropName,m_DestBlockWidth * 2,m_DestBlockWidth * 2 };
+			pSprite->SetDestRectY(float(enemyType * spriteWidth));
+			pDrop->AddComponent(pSprite);
+			m_Scenes[levelNumber]->AddGameObjectToNonActive(pDrop);
 			pBinReader->Read(temp, input); // read the reading the "fist byte" again 
+			amountOfenemies++;
 		}
 	}
 	SafeDelete(pBinReader);
 }
 
-void BubleBobbleLevelDataReader::Check(bool bit, GameObject* pObject, const std::string& textureName, SDL_Rect& dest, const SDL_Rect& resource, SDL_Rect& Collision, bool& wasLastBlockCollision,const Row& row, bool firstOrLast2Coloms)
+void BubleBobbleLevelDataReader::MakeCharacters()noexcept
+{
+	auto pObject = new GameObject{};
+	pObject->AddComponent(new ColliderComponent{ SDL_Rect{0,0,m_DestBlockWidth * 2,m_DestBlockWidth * 2},false });
+	pObject->AddComponent(new StateComponent());
+	const int spriteWidth{ 16 };
+	SpriteComponent* pSprite = new SpriteComponent{ 4, 4, spriteWidth,spriteWidth, "heroGreen.png",m_DestBlockWidth * 2,m_DestBlockWidth * 2 };
+	pSprite->SetUpdate(false);
+	pSprite->SetIsGoingLeft(false);
+	pObject->AddComponent(pSprite);
+	pObject->AddComponent(new CharacterComponent{0});
+	pObject->GetTransform()->SetResetPosition(Fried::float2(float(m_DestBlockWidth * 2), float(22 * m_DestBlockWidth + 40)));
+	m_Scenes[0]->AddGameObject(pObject);
+	BubbleManager::GetInstance()->MakeBubbles(25);
+
+	pObject = new GameObject{};
+	pObject->AddComponent(new ColliderComponent{SDL_Rect{0,0,m_DestBlockWidth * 2,m_DestBlockWidth * 2},false });
+	pObject->AddComponent(new StateComponent());
+	pSprite = new SpriteComponent{ 4, 4, spriteWidth,spriteWidth, "heroBlue.png",m_DestBlockWidth * 2,m_DestBlockWidth * 2 };
+	pSprite->SetUpdate(false);
+	pObject->AddComponent(pSprite);
+	pObject->AddComponent(new CharacterComponent{1});
+	pObject->GetTransform()->SetResetPosition(Fried::float2(float(m_DestBlockWidth * 28), float(22 * m_DestBlockWidth + 40)));
+	m_Scenes[0]->AddGameObject(pObject);
+}
+
+void BubleBobbleLevelDataReader::Check(bool bit, GameObject* pObject, const std::string& textureName, SDL_Rect& dest, const SDL_Rect& resource, SDL_Rect& Collision, 
+	bool& wasLastBlockCollision,const Row& row, bool firstOrLast2Coloms)noexcept
 {
 	if (bit)
 	{
@@ -201,14 +236,15 @@ void BubleBobbleLevelDataReader::Check(bool bit, GameObject* pObject, const std:
 				}
 			}
 			wasLastBlockCollision = false;
-
 		}
 		else if (row == Row::last && !wasLastBlockCollision)
 		{
 			Collision.x -= m_DestBlockWidth;
 			if (Collision.x >= 2 * m_DestBlockWidth)
 			{
-				pObject->AddComponent(new ColliderComponent{ Collision,true });
+				ColliderComponent* pCollider = new ColliderComponent{ Collision,true };
+				pCollider->SetTrigger(ColliderTrigger::Teleport);
+				pObject->AddComponent(pCollider);
 			}
 			Collision.x += Collision.w;
 			Collision.w = 2 * m_DestBlockWidth;

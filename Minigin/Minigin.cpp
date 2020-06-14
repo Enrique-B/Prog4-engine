@@ -8,6 +8,7 @@
 #include "TextComponent.h"
 #include "GameObject.h"
 #include "Scene.h"
+#include "BubbleManager.h"
 
 #include <chrono>
 #include <thread>
@@ -16,6 +17,8 @@
 
 using namespace std;
 using namespace std::chrono;
+
+#define MultiThreading
 
 void Fried::Minigin::Initialize()
 {
@@ -60,6 +63,7 @@ void Fried::Minigin::Cleanup()
 	delete ResourceManager::GetInstance(); 
 	delete SceneManager::GetInstance(); 
 	delete StateManager::GetInstance();
+	delete BubbleManager::GetInstance();
 }
 
 void Fried::Minigin::Run()
@@ -81,9 +85,11 @@ void Fried::Minigin::Run()
 
 			doContinue = input->ProcessInput();
 			input->HandleInput();
+#ifdef MultiThreading
 			collisionThread = std::async(std::launch::async, &SceneManager::CollisionUpdate, sceneManager, elapsedSec);
-			
-			//sceneManager->CollisionUpdate();
+#else
+			sceneManager->CollisionUpdate(elapsedSec);
+#endif // MultiThreading
 			sceneManager->Update(elapsedSec);
 			// render
 			renderer->Render();
@@ -93,8 +99,10 @@ void Fried::Minigin::Run()
 			elapsedSec = std::chrono::duration<float>(t2 - t1).count();
 			// Update current time
 			t1 = t2;
-			collisionThread.get(); // should stop the loop here and remove the non active objects 
-			sceneManager->DeactivateNonActiveGameObjects();
+#ifdef MultiThreading
+		collisionThread.get(); // should stop the loop here and remove the non active objects 
+#endif 
+		sceneManager->DeactivateNonActiveGameObjects();
 		}
 	}
 	Cleanup();

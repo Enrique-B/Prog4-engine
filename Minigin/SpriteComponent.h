@@ -21,6 +21,7 @@ public:
 	void SetUpdate(bool update) { m_IsUpUpdating = update;};
 	void SetFrame(int number);
 	void SetMaxedFrames(int maxFrames);
+	void SetTexture(const std::string& fileName);
 private: 
 	const float m_FrameWidht; 
 	const float m_FrameHeight;

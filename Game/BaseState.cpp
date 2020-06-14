@@ -108,3 +108,23 @@ WeaponStateShootBubble::WeaponStateShootBubble()
 {
 	SetName("WeaponStateShootBubble");
 }
+
+MoveStateRightFast::MoveStateRightFast()
+{
+	SetName("MoveStateRightFast");
+}
+
+void MoveStateRightFast::Update(float elapsedSec, float& velocity)
+{
+	velocity = m_MovementSpeed * 3 * elapsedSec;
+}
+
+MoveStateLeftFast::MoveStateLeftFast()
+{
+	SetName("MoveStateLeftFast");
+}
+
+void MoveStateLeftFast::Update(float elapsedSec, float& velocity)
+{
+	velocity = -m_MovementSpeed * 3 * elapsedSec;
+}

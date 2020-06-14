@@ -97,6 +97,15 @@
     <ClInclude Include="CharacterComponent.h">
       <Filter>Components</Filter>
     </ClInclude>
+    <ClInclude Include="BubbleManager.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="ScoreComponent.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemComponent.h">
+      <Filter>Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Minigin.cpp" />
@@ -159,6 +168,15 @@
       <Filter>Components</Filter>
     </ClCompile>
     <ClCompile Include="CharacterComponent.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="BubbleManager.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="ScoreComponent.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemComponent.cpp">
       <Filter>Components</Filter>
     </ClCompile>
   </ItemGroup>

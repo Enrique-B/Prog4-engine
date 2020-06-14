@@ -13,9 +13,6 @@ FPSComponent::FPSComponent()noexcept
 	SetComponentName(ComponentName::FPS);
 }
 
-FPSComponent::~FPSComponent()
-{
-}
 
 void FPSComponent::Update(float elapsedSec)noexcept
 {

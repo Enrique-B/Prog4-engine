@@ -13,7 +13,7 @@ public:
 	TextureComponent(const TextureComponent&) = delete;
 	TextureComponent(TextureComponent&&) = delete;
 	TextureComponent& operator= (const TextureComponent&) = delete;
-	TextureComponent& operator= (const TextureComponent&&) = delete;
+	TextureComponent& operator= (TextureComponent&&) = delete;
 
 	virtual void Render(const Fried::float2& pos)const noexcept;
 private:

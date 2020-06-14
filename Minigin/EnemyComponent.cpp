@@ -19,24 +19,25 @@ EnemyComponent::EnemyComponent(unsigned char enemyType, const float amountOfSecI
 	, m_IsRaycasting{false}
 	, m_IsLastStateJump{true}
 	, m_AmountOfRaycast{0}
+	, m_TimeForNextCollisionCheck{0}
 {
-	SetComponentName(ComponentName::enemy);
+	SetComponentName(ComponentName::Enemy);
 }
 
 void EnemyComponent::Initialize()
 {
 	GameObject* pObject = GetGameObject(); 
-	if (pObject->HasComponent(ComponentName::state))
+	if (pObject->HasComponent(ComponentName::State))
 	{
-		m_pStateComp = pObject->GetComponent<StateComponent>(ComponentName::state);
+		m_pStateComp = pObject->GetComponent<StateComponent>(ComponentName::State);
 	}
 	else
 	{
 		throw std::runtime_error(std::string("EnemyComponent::Initialize() does not have a statecomponent"));
 	}
-	if (pObject->HasComponent(ComponentName::state))
+	if (pObject->HasComponent(ComponentName::State))
 	{
-		m_pColliderComp = pObject->GetComponent<ColliderComponent>(ComponentName::collider);
+		m_pColliderComp = pObject->GetComponent<ColliderComponent>(ComponentName::Collider);
 	}
 	else
 	{
@@ -55,6 +56,8 @@ void EnemyComponent::Update(float elapsedSec)
 		m_pStateComp->SetMoveStateY(stateMan->GetMoveStateY("MoveStateYNone"));
 		return;
 	}
+	const bool isOnGround = m_pColliderComp->HasTrigger(ColliderTrigger::Bottom);
+
 	if (m_TimeForNextCollisionCheck > 0.2f)
 	{
 		m_TimeForNextCollisionCheck = 0;
@@ -65,26 +68,31 @@ void EnemyComponent::Update(float elapsedSec)
 			GetGameObject()->GetComponent< SpriteComponent>(ComponentName::Sprite)->SetIsGoingLeft(!m_IsLookingRight);
 			const Fried::float2 middlePoint{ m_pColliderComp->GetMiddlePoint() };
 			const SDL_Rect colliderRect = m_pColliderComp->GetCollisionRect();
-			const float x = middlePoint.x + int(!m_IsLookingRight * -1) * (colliderRect.w + 1); 
+			const float x = middlePoint.x + int(m_IsLookingRight ? 1 : -1) * (colliderRect.w + 1);
 			// raycast the other direction 
 			Fried::HitInfo info; 
+			
 			// if the character isn't on the row, jump up 
-			if (!GetGameObject()->GetScene()->Raycast(Fried::line({ x, middlePoint.y }, { x + int(!m_IsLookingRight * -1) * 70 ,
-				middlePoint.y }), false, true, info))
+			if (GetGameObject()->GetScene()->RaycastPLayer(Fried::line({ x, middlePoint.y }, 
+				{ x + int(m_IsLookingRight ? 1 : -1) * 70 ,middlePoint.y }), info) )
 			{
-				m_pStateComp->SetMoveStateY(stateMan->GetMoveStateY("JumpState"));
-				m_IsLastStateJump = true;
+				// start moving towards the player and still raycast 
+				m_IsLookingRight ? m_pStateComp->SetMoveStateX(stateMan->GetMoveStateX("MoveRightState")) : m_pStateComp->SetMoveStateX(stateMan->GetMoveStateX("MoveLeftState"));
 			}
 			else
 			{
-				// start moving towards the player and still raycast 
+				if (isOnGround)
+				{
+					m_pStateComp->SetMoveStateY(stateMan->GetMoveStateY("JumpState"));
+					m_IsLastStateJump = true;
+				}
+
 			}
 			// look the opposite side and raycast after it landed 
 			// when it's raycasting set the sprite to 2 
 
 		}
 	}
-	const bool isOnGround = m_pColliderComp->HasTrigger(ColliderTrigger::Bottom);
 
 	if (!m_IsRaycasting)
 	{
@@ -93,5 +101,7 @@ void EnemyComponent::Update(float elapsedSec)
 		else
 			m_pStateComp->SetMoveStateX(stateMan->GetMoveStateX("MoveStateXIdle"));
 	}
-
+	else
+	{
+	}
 }

@@ -1,10 +1,15 @@
 #pragma once
 #include "BaseComponent.h"
-class CharacterComponent : public BaseComponent
+class CharacterComponent final: public BaseComponent
 {
 public: 
-	CharacterComponent(); 
-	~CharacterComponent();
+	CharacterComponent(unsigned int characterNumber);
+	CharacterComponent(const CharacterComponent& other) = delete;
+	CharacterComponent(CharacterComponent&& other) = delete;
+	CharacterComponent& operator=(const CharacterComponent& other) = delete;
+	CharacterComponent& operator=(CharacterComponent&& other) = delete;
+	~CharacterComponent() = default;
+	unsigned int GetCharacterNumber()const noexcept { return m_CharacterNumber; }
 	virtual void Update(float elapsedSec)noexcept override;
 	bool IsDead()const noexcept { return m_IsDead; }
 private: 
@@ -13,7 +18,6 @@ private:
 	float m_AmountOfSecBeforeReset; 
 	float m_AmountOfSecOfInvincability;
 	int m_AmountOfLives;
-
+	unsigned int m_CharacterNumber;
 	void Reset();
-	void MakeBubble();
 };

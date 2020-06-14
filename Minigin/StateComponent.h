@@ -9,10 +9,15 @@ class StateComponent final : public BaseComponent
 {
 public: 
 	StateComponent()noexcept;
+	StateComponent(const StateComponent& other) = delete;
+	StateComponent(StateComponent&& other) = delete;
+	StateComponent& operator=(const StateComponent& other) = delete;
+	StateComponent& operator=(StateComponent&& other) = delete;
 	~StateComponent()noexcept;
+
 	virtual void Update(float elapsedSec)override;
 	
-	const Fried::float2& GetVelicity()const { return m_Velocity; };
+	const Fried::float2& GetVelicity()const noexcept { return m_Velocity; };
 	void SetVelocity(const Fried::float2& vel);
 	void SetMoveStateX(MoveStateX* pState)noexcept(false);
 	void SetMoveStateY(MoveStateY* pState)noexcept(false);

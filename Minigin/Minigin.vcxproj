@@ -197,6 +197,7 @@ xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\x64\*.dll" "$(OutputPath)" /R /Y</Com
     <ClInclude Include="BaseComponent.h" />
     <ClInclude Include="BinaryReaderWriter.h" />
     <ClInclude Include="BubbleComponent.h" />
+    <ClInclude Include="BubbleManager.h" />
     <ClInclude Include="BubleBobbleLevelDataReader.h" />
     <ClInclude Include="CharacterComponent.h" />
     <ClInclude Include="ColliderComponent.h" />
@@ -206,12 +207,14 @@ xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\x64\*.dll" "$(OutputPath)" /R /Y</Com
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Components.h" />
     <ClInclude Include="InputManager.h" />
+    <ClInclude Include="ItemComponent.h" />
     <ClInclude Include="Minigin.h" />
     <ClInclude Include="MiniginPCH.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="ScoreComponent.h" />
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="SpriteComponent.h" />
     <ClInclude Include="StateComponent.h" />
@@ -224,6 +227,7 @@ xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\x64\*.dll" "$(OutputPath)" /R /Y</Com
   <ItemGroup>
     <ClCompile Include="BaseComponent.cpp" />
     <ClCompile Include="BubbleComponent.cpp" />
+    <ClCompile Include="BubbleManager.cpp" />
     <ClCompile Include="BubleBobbleLevelDataReader.cpp" />
     <ClCompile Include="CharacterComponent.cpp" />
     <ClCompile Include="ColliderComponent.cpp" />
@@ -232,6 +236,7 @@ xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\x64\*.dll" "$(OutputPath)" /R /Y</Com
     <ClCompile Include="FPSComponent.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="InputManager.cpp" />
+    <ClCompile Include="ItemComponent.cpp" />
     <ClCompile Include="Minigin.cpp" />
     <ClCompile Include="MiniginPCH.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -244,6 +249,7 @@ xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\x64\*.dll" "$(OutputPath)" /R /Y</Com
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneManager.cpp" />
+    <ClCompile Include="ScoreComponent.cpp" />
     <ClCompile Include="SpriteComponent.cpp" />
     <ClCompile Include="StateComponent.cpp" />
     <ClCompile Include="StateManager.cpp" />

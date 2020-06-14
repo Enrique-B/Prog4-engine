@@ -6,19 +6,20 @@
 #include "StateManager.h"
 #include "ColliderComponent.h"
 
-StateComponent::StateComponent()noexcept
+StateComponent::StateComponent() noexcept
 	:BaseComponent()
 	, m_Velocity{0,0}
 	, m_CurrentMoveStateX{ Fried::StateManager::GetInstance()->GetMoveStateX("MoveStateXIdle") }
 	, m_pIdleMoveStateY{ new MoveStateYIdle{} }
 	, m_CurrentMoveStateY{ m_pIdleMoveStateY }
+	, m_CurrentWeaponState{ nullptr }
 	, m_CurrentLifeState{ nullptr }
 	, m_DidMoveStateXChange{ false }
 	, m_DidMoveStateYChange{ false }
 	, m_DidLifeStateChange{ false }
 	, m_JumpVelocity{0}
 { 
-	SetComponentName(ComponentName::state);
+	SetComponentName(ComponentName::State);
 }
 
 StateComponent::~StateComponent()
@@ -31,28 +32,18 @@ void StateComponent::Update(float elapsedSec)
 {
 	// check something with the weapon state and if it's shooting if it is make a new game object with a bubble
 	m_CurrentMoveStateX->Update(elapsedSec, m_Velocity.x);
-	const bool IsOnGround{ GetGameObject()->GetComponent<ColliderComponent>(ComponentName::collider)->HasTrigger(ColliderTrigger::Bottom)};
+	const bool IsOnGround{ GetGameObject()->GetComponent<ColliderComponent>(ComponentName::Collider)->HasTrigger(ColliderTrigger::Bottom) };
 	const bool isIdle{ m_CurrentMoveStateY == m_pIdleMoveStateY };
 
 	if (m_CurrentLifeState == Fried::StateManager::GetInstance()->GetLifeState("DeathState"))
 	{
 		return;
 	}
-	if (IsOnGround) // it's jumping here
+	m_CurrentMoveStateY->Update(elapsedSec, m_JumpVelocity);
+	const float terminalVelocity{ 90 * 2.f };
+	if (m_JumpVelocity > terminalVelocity)
 	{
-		if (!isIdle)
-		{
-			m_CurrentMoveStateY->Update(elapsedSec, m_JumpVelocity);
-		}
-	}   
-	else if (!IsOnGround && isIdle)
-	{
-		m_CurrentMoveStateY->Update(elapsedSec, m_JumpVelocity);
-		const float terminalVelocity{ 90 * 2.f};
-		if (m_JumpVelocity > terminalVelocity)
-		{
-			m_JumpVelocity = terminalVelocity;
-		}
+		m_JumpVelocity = terminalVelocity;
 	}
 	m_Velocity.y = m_JumpVelocity * elapsedSec;
 	SetMoveStateY(m_pIdleMoveStateY);

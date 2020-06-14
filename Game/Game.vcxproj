@@ -195,6 +195,8 @@ xcopy "$(SolutionDir)3rdParty\SDL2_mixer-2.0.2\lib\x64\SDL2_mixer.dll" "$(Output
     <ClCompile Include="Command.cpp" />
     <ClCompile Include="FriedEngine.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Observer.cpp" />
+    <ClCompile Include="Subject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Minigin\Minigin.vcxproj">
@@ -205,6 +207,8 @@ xcopy "$(SolutionDir)3rdParty\SDL2_mixer-2.0.2\lib\x64\SDL2_mixer.dll" "$(Output
     <ClInclude Include="BaseState.h" />
     <ClInclude Include="Command.h" />
     <ClInclude Include="FriedEngine.h" />
+    <ClInclude Include="Observer.h" />
+    <ClInclude Include="Subject.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

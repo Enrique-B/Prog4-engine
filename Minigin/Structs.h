@@ -11,28 +11,28 @@ namespace Fried
 {
 	struct float2
 	{
-		float2(float X, float Y) : x{ X }, y{ Y }{}
-		float2() : x{ 0 }, y{ 0 }{}
-		float2(const float2& f2) :x{ f2.x }, y{ f2.y } {};
-		float2& operator=(const float2& f2)
+		float2(float X, float Y)noexcept : x{ X }, y{ Y }{}
+		float2()noexcept : x{ 0 }, y{ 0 }{}
+		float2(const float2& f2)noexcept :x{ f2.x }, y{ f2.y } {};
+		float2(float2&& f2)noexcept :x{ f2.x }, y{ f2.y } {};
+		float2& operator=(const float2& f2)noexcept
 		{
 			x = f2.x;
 			y = f2.y;
 			return *this;
 		}
-		float2& operator+=(const float2& f2)
+		float2& operator+=(const float2& f2)noexcept
 		{
 			x += f2.x;
 			y += f2.y;
 			return *this;
 		}
-		//float2 operator-(const Fried::float2& f2)const
-		//{
-		//	float2 returnValue;
-		//	returnValue.x = x - f2.x;
-		//	returnValue.y = y - f2.y;
-		//	return returnValue;
-		//}
+		float2& operator=(float2&& f2)noexcept
+		{
+			x = f2.x;
+			y = f2.y;
+			return *this;
+		}
 		float cross(const float2& f2)const
 		{
 			return x * f2.y - y* f2.x;
@@ -43,6 +43,12 @@ namespace Fried
 
 	struct HitInfo
 	{
+		HitInfo() = default; 
+		HitInfo(const HitInfo&) = delete;
+		HitInfo(HitInfo&&) = delete;
+		HitInfo& operator= (const HitInfo&) = delete;
+		HitInfo& operator= (HitInfo&&) = delete;
+		~HitInfo() = default;
 		std::vector<float2> intersectPoint{};
 		bool hit{ false };
 		HitInfo& operator+=(const HitInfo& info);
@@ -64,9 +70,16 @@ namespace Fried
 	struct int2
 	{
 		int2(int X, int Y) : x{ X }, y{ Y }{}
+		~int2() = default;
 		int2() : x{ 0 }, y{ 0 }{}
 		int2(const int2& f2) :x{ f2.x }, y{ f2.y } {};
+		int2(int2&& f2)noexcept :x{ f2.x }, y{ f2.y } {};
 		int2& operator=(const int2& f2)
+		{
+			x = f2.x;
+			y = f2.y;
+		}
+		int2& operator=(int2&& f2)noexcept
 		{
 			x = f2.x;
 			y = f2.y;
@@ -79,6 +92,12 @@ namespace Fried
 	{
 		line(const float2& point1, const float2& point2);
 		line(float px1, float py1, float px2, float py2);
+		line(const line&) = default;
+		line(line&&) = default;
+		line& operator= (const line&) = default;
+		line& operator= (line&&) = default;
+		~line() = default;
+
 		float2 p1, p2;
 		void intersect(const line& collisionLine, HitInfo& hitinfo)const;
 		void intersect(const SDL_Rect& collisionLine,HitInfo& hitinfo)const;

@@ -10,6 +10,12 @@ namespace Fried
 	class Renderer final : public Singleton<Renderer>
 	{
 	public:
+		Renderer(const Renderer& other) = delete;
+		Renderer(Renderer&& other) = delete;
+		Renderer& operator=(const Renderer& other) = delete;
+		Renderer& operator=(Renderer&& other) = delete;
+		~Renderer() = default;
+
 		void Init(SDL_Window* window) noexcept(false);
 		void Render() const noexcept;
 		void Destroy()noexcept;
@@ -21,6 +27,8 @@ namespace Fried
 		void RenderLine(const Fried::line& line)const noexcept;
 		SDL_Renderer* GetSDLRenderer() const noexcept { return m_Renderer; }
 	private:
+		friend class Singleton<Renderer>;
+		Renderer() = default;
 		SDL_Renderer* m_Renderer{};
 	};
 }
