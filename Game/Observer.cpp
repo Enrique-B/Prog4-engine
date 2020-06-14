@@ -41,6 +41,7 @@ void EnemyObserver::Notify(Event event, GameObject* pObject)noexcept
 void EnemyObserver::SetAmountOfEnemies(int amountOfEnemies) noexcept
 {
 	m_AmountOfEnemies = amountOfEnemies; 
+	m_IsNextLevelUnlocked = false;
 }
 
 PlayerObserver::PlayerObserver(Fried::Scene* pScene) noexcept
@@ -57,10 +58,6 @@ void PlayerObserver::Notify(Event event, GameObject* pObject)noexcept
 		{
 			CharacterComponent* pChar = pObject->GetComponent<CharacterComponent>(ComponentName::Character);
 			int amountOfLives = pChar->GetAmountOfLives();
-			if (amountOfLives == 0)
-			{
-				pObject->SetIsActive(false);
-			}
 			Fried::SceneManager* pSceneManager = Fried::SceneManager::GetInstance();
 			Fried::Scene* pScene = pSceneManager->GetUIScene(Fried::SceneManager::UI::GameMenu);
 			std::vector<GameObject*>children = pScene->GetChildren();
@@ -82,8 +79,16 @@ void PlayerObserver::Notify(Event event, GameObject* pObject)noexcept
 			{
 				m_LivesPlayer2 = amountOfLives;
 				texts[2]->SetText(std::to_string(amountOfLives));
-			}			
-			std::cout << "Player1Lives:  " << m_LivesPlayer1 << "Player2Lives " << m_LivesPlayer2 << " \n";
+			}
+			if (amountOfLives == 0)
+			{
+				pObject->SetIsActive(false);
+				if (m_LivesPlayer1 == 0 && m_LivesPlayer2 == 0)
+				{
+					pSceneManager->SetReset();
+					return;
+				}
+			}
 		}
 		break;
 	default:

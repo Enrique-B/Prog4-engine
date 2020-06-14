@@ -28,6 +28,13 @@ StateComponent::~StateComponent()
 	SafeDelete(m_pIdleMoveStateY);
 }
 
+void StateComponent::Initialize() noexcept(false)
+{
+	m_CurrentMoveStateY = m_pIdleMoveStateY;
+	m_CurrentLifeState = Fried::StateManager::GetInstance()->GetLifeState("AliveState"); 
+	m_CurrentMoveStateX = Fried::StateManager::GetInstance()->GetMoveStateX("MoveStateXIdle");
+}
+
 void StateComponent::Update(float elapsedSec)
 {
 	// check something with the weapon state and if it's shooting if it is make a new game object with a bubble

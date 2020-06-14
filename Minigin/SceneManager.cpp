@@ -1,6 +1,9 @@
 #include "MiniginPCH.h"
 #include "SceneManager.h"
 #include "Scene.h"
+#include "GameObject.h"
+#include "TextComponent.h"
+#include "../Game/Observer.h"
 
 Fried::SceneManager::~SceneManager()
 {
@@ -91,10 +94,123 @@ void Fried::SceneManager::Render()noexcept
 void Fried::SceneManager::DeactivateNonActiveGameObjects() noexcept(false)
 {
 	m_pScenes[m_CurrentScene]->DeactivateNonActiveGameObjects();
+	if (m_Reset)
+	{
+		Reset();
+		m_Reset = false;
+	}
+}
+
+void Fried::SceneManager::Reset() // only get's called when both players are dead
+{
+	const std::vector<GameObject*> pCurrentSceneObjects = m_pScenes[m_CurrentScene]->GetDeactivatedGameObjects();
+	size_t size = pCurrentSceneObjects.size();
+	std::vector<GameObject*> pCharacters;
+	size_t amountOfCharactersFound{};
+	for (size_t i = 0; i < size; i++)
+	{
+		if (pCurrentSceneObjects[i]->HasComponent(ComponentName::Character))
+		{
+			m_pScenes[m_CurrentScene]->RemoveGameObjectFromNonActive(pCurrentSceneObjects[i]);
+			pCharacters.push_back(pCurrentSceneObjects[i]);
+			amountOfCharactersFound++;
+			if (amountOfCharactersFound == 2)
+				break;
+		}
+	}
+	// finding the lost characters
+	if (amountOfCharactersFound != 2)
+	{
+		for (size_t i = 0; i < m_CurrentScene; i++)
+		{
+			const std::vector<GameObject*> pUnusedSceneObjects = m_pScenes[m_CurrentScene]->GetDeactivatedGameObjects();
+			size = pUnusedSceneObjects.size();
+			for (size_t j = 0; j < size; j++)
+			{
+				if (pCurrentSceneObjects[j]->HasComponent(ComponentName::Character))
+				{
+					m_pScenes[i]->RemoveGameObject(pCurrentSceneObjects[j]);
+					pCharacters.push_back(pCurrentSceneObjects[j]);
+					amountOfCharactersFound++;
+					if (amountOfCharactersFound == 2)
+						break;
+				}
+			}
+		}
+	}
+	//adding the characters back into the first scene 
+	for (size_t i = 0; i < amountOfCharactersFound; i++)
+	{
+		m_pScenes[0]->AddGameObject(pCharacters[i]);
+	}
+	// resetting every scene 
+	for (size_t i = 0; i <= m_CurrentScene; i++)
+	{
+		m_pScenes[i]->Reset();
+	}
+	Fried::Scene* pUIScene = m_pUIScenes[int(UI::GameMenu)];
+	std::vector<GameObject*> copy = pUIScene->GetChildren();
+	size = copy.size();
+	size_t score{0};
+	size_t lives{0};
+	// finding the score of both players, finding the lives texture/text 
+	for (size_t i = 0; i < size; i++)
+	{
+		bool hasText = copy[i]->HasComponent(ComponentName::Text);
+		if (hasText && copy[i]->HasComponent(ComponentName::Texture))
+		{
+			lives++;
+			copy[i]->GetComponent<TextComponent>(ComponentName::Text)->SetText("4");
+		}
+		else if (hasText)
+		{
+			score++; 
+			if (score >= 2)
+			{
+				copy[i]->GetComponent<TextComponent>(ComponentName::Text)->SetText("score: 0");
+			}
+		}
+	}
+	copy.clear();
+	if (lives != 2 || score != 3)
+	{
+		copy = pUIScene->GetDeactivatedGameObjects();
+		size = copy.size();
+		for (size_t i = 0; i < size; i++)
+		{
+			bool hasText = copy[i]->HasComponent(ComponentName::Text);
+			if (hasText && copy[i]->HasComponent(ComponentName::Texture))
+			{
+				lives++;
+				copy[i]->GetComponent<TextComponent>(ComponentName::Text)->SetText("4");
+				if (lives == 2 && score == 3)
+				{
+					break;
+				}
+			}
+			else if (hasText)
+			{
+				score++;
+				if (score >= 2)
+				{
+					copy[i]->GetComponent<TextComponent>(ComponentName::Text)->SetText("score: 0");
+					if (lives == 2 && score == 3)
+					{
+						break;
+					}
+				}
+			}
+		}
+	}
+	PlayerObserver* playerObserver = static_cast<PlayerObserver*>(pUIScene->GetObservers()[1]);
+	playerObserver->SetPlayer1Lives(4);
+	playerObserver->SetPlayer2Lives(4);
+	SetUIScene(Fried::SceneManager::UI::StartMenu);
+	m_CurrentScene = 0;
 }
 
 Fried::SceneManager::SceneManager()
-	: m_CurrentScene{ 0 }, m_IsRenderingCollision(false), m_CurrentUIScene{ UI::StartMenu }
+	: m_CurrentScene{ 0 }, m_IsRenderingCollision(false), m_CurrentUIScene{ UI::StartMenu }, m_Reset{false}
 {
 	m_pUIScenes.push_back(nullptr);
 	m_pUIScenes.push_back(nullptr);

@@ -335,6 +335,39 @@ void Fried::Scene::AddObserver(Observer* pObserver) noexcept(false)
 	}
 }
 
+void Fried::Scene::Reset()
+{
+	size_t amountOfEnemies{ 0 };
+	std::vector<GameObject*> copy = m_pObjects; // copying because this way i don't fuck up anything during the looping when adding/removing
+	size_t size = copy.size();
+	for (size_t i = 1; i < size; i++) // 1 is the level and shouldn't be reset 
+	{
+		if (copy[i]->HasComponent(ComponentName::Enemy))
+		{
+			RemoveGameObject(copy[i]);
+			AddGameObject(copy[i]);
+			amountOfEnemies++;
+		}
+		else if (copy[i]->HasComponent(ComponentName::Item))
+		{
+			RemoveGameObject(copy[i]);
+			AddGameObjectToNonActive(copy[i]);			
+		}		
+	}
+	copy = m_pDeactivatedGameObjects;
+	size = copy.size();
+	for (size_t i = 0; i < size; i++)
+	{
+		if (copy[i]->HasComponent(ComponentName::Enemy))
+		{
+			amountOfEnemies++;
+			RemoveGameObjectFromNonActive(copy[i]);
+			AddGameObject(copy[i]);
+		}
+	}
+	static_cast<EnemyObserver*>(m_pObservers[0])->SetAmountOfEnemies(amountOfEnemies);	
+}
+
 void Fried::Scene::CheckStaticCollision(size_t index, const std::vector<CollisionLine>& lines)
 {
 	HitInfo info{};

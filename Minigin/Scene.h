@@ -37,6 +37,7 @@ namespace Fried
 		bool Raycast(const Fried::line& line, bool raycastStaticColliders, bool raycastDynamicColiders, Fried::HitInfo& hitInfo)const noexcept;
 		bool RaycastPLayer(const Fried::line& line, Fried::HitInfo& hitinfo)const noexcept;
 		void AddObserver(Observer* pObserver)noexcept(false);
+		void Reset(); 
 	private:
 		std::vector<GameObject*> m_pObjects{};
 		std::vector<GameObject*> m_pDeactivatedGameObjects{};

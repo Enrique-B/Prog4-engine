@@ -11,6 +11,8 @@
 #include "BubbleComponent.h"
 #include "BubbleManager.h"
 #include "Scene.h"
+#include "Observer.h"
+#include "CharacterComponent.h"
 #include <iostream>
 
 JumpCommand::JumpCommand(GameObject* pObject)
@@ -174,32 +176,46 @@ void SinglePlayerCommand::Execute()
 				pCharacters.push_back(pGameObjects[i]);
 			}
 		}
-		pCharacters[1]->GetComponent<StateComponent>(ComponentName::State)->
-			SetLifeState(Fried::StateManager::GetInstance()->GetLifeState("DeathState"));
-		pCharacters[1]->SetIsActive(false);
-		Fried::Scene* UIscene = pManager->GetUIScene(Fried::SceneManager::UI::GameMenu);
-		const std::vector<GameObject*> UIChildren = UIscene->GetChildren();
-		size = UIChildren.size();
-		size_t amount = 0;
-		size_t amount2 = 0;
-		for (size_t i = 0; i < size; i++)
+		size_t characternumber = 1;
+		CharacterComponent* pcharcomp = pCharacters[0]->GetComponent<CharacterComponent>(ComponentName::Character);
+		if (pcharcomp->GetCharacterNumber() != 0)
 		{
-			if (UIChildren[i]->HasComponent(ComponentName::Text) && UIChildren[i]->HasComponent(ComponentName::Texture))
+			characternumber = 0;
+		}
+		pcharcomp->SetAmountOfLives(4);
+		Fried::Scene* UIscene = pManager->GetUIScene(Fried::SceneManager::UI::GameMenu);
+		PlayerObserver* playerObserver = static_cast<PlayerObserver*>(UIscene->GetObservers()[1]);
+		playerObserver->SetPlayer2Lives(0);
+
+		if (pCharacters.size() == 2) // if it comes from singleplayer it won't have to do this
+		{
+			pCharacters[1]->GetComponent<CharacterComponent>(ComponentName::Character)->SetAmountOfLives(4);
+			pCharacters[characternumber]->GetComponent<StateComponent>(ComponentName::State)->
+				SetLifeState(Fried::StateManager::GetInstance()->GetLifeState("DeathState"));
+			pCharacters[characternumber]->SetIsActive(false);
+			const std::vector<GameObject*> UIChildren = UIscene->GetChildren();
+			size = UIChildren.size();
+			size_t amount = 0;
+			size_t amount2 = 0;
+			for (size_t i = 0; i < size; i++)
 			{
-				amount++; 
-				if (amount == 2)
+				if (UIChildren[i]->HasComponent(ComponentName::Text) && UIChildren[i]->HasComponent(ComponentName::Texture))
 				{
-					UIscene->RemoveGameObject(UIChildren[i]);
-					UIscene->AddGameObjectToNonActive(UIChildren[i]);
+					amount++;
+					if (amount == 2)
+					{
+						UIscene->RemoveGameObject(UIChildren[i]);
+						UIscene->AddGameObjectToNonActive(UIChildren[i]);
+					}
 				}
-			}
-			else if (UIChildren[i]->HasComponent(ComponentName::Text))
-			{
-				amount2++; 
-				if (amount2 == 3)
+				else if (UIChildren[i]->HasComponent(ComponentName::Text))
 				{
-					UIscene->RemoveGameObject(UIChildren[i]);
-					UIscene->AddGameObjectToNonActive(UIChildren[i]);
+					amount2++; // get the second player score 
+					if (amount2 == 3)
+					{
+						UIscene->RemoveGameObject(UIChildren[i]);
+						UIscene->AddGameObjectToNonActive(UIChildren[i]);
+					}
 				}
 			}
 		}
@@ -212,6 +228,27 @@ void CoopCommand::Execute()
 	Fried::SceneManager::UI UI = pManager->GetUI();
 	if (UI == Fried::SceneManager::UI::StartMenu)
 	{
+		Fried::Scene* pCurrentScene = pManager->GetCurrentScene(); 
+		std::vector<GameObject*> pChildren = pCurrentScene->GetChildren();
+		const size_t childrensize = pChildren.size(); 
+		for (size_t i = 0; i < childrensize; i++)
+		{
+			if (pChildren[i]->HasComponent(ComponentName::Character))
+			{
+				pChildren[i]->GetComponent<CharacterComponent>(ComponentName::Character)->SetAmountOfLives(4);
+			}
+		}
 		pManager->SetUIScene(Fried::SceneManager::UI::GameMenu);
+		Fried::Scene* UIscene = pManager->GetUIScene(Fried::SceneManager::UI::GameMenu);
+		std::vector<GameObject*> deactivatedObjects = UIscene->GetDeactivatedGameObjects();
+		const size_t size{ deactivatedObjects.size() };
+		for (size_t i = 0; i < size; i++)
+		{
+			if (deactivatedObjects[i]->HasComponent(ComponentName::Text))
+			{
+				UIscene->RemoveGameObjectFromNonActive(deactivatedObjects[i]);
+				UIscene->AddGameObject(deactivatedObjects[i]);
+			}
+		}
 	}
 }

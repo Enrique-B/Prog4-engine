@@ -14,8 +14,8 @@ public:
 	StateComponent& operator=(const StateComponent& other) = delete;
 	StateComponent& operator=(StateComponent&& other) = delete;
 	~StateComponent()noexcept;
-
-	virtual void Update(float elapsedSec)override;
+	virtual void Initialize()noexcept(false) override;
+	virtual void Update(float elapsedSec)noexcept(false)override;
 	
 	const Fried::float2& GetVelicity()const noexcept { return m_Velocity; };
 	void SetVelocity(const Fried::float2& vel);

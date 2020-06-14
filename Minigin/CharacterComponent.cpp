@@ -23,6 +23,14 @@ CharacterComponent::CharacterComponent(unsigned int characterNumber)
 	SetComponentName(ComponentName::Character);
 }
 
+void CharacterComponent::Initialize() noexcept
+{
+	m_IsDead = { false };
+	m_IsInvincable = { false };
+	m_AmountOfSecBeforeReset = { 2 };
+	m_AmountOfSecOfInvincability = { 3 };
+}
+
 void CharacterComponent::Update(float elapsedSec) noexcept
 {
 	Fried::StateManager* pStateManager = Fried::StateManager::StateManager::GetInstance();
@@ -46,7 +54,10 @@ void CharacterComponent::Update(float elapsedSec) noexcept
 			m_AmountOfSecBeforeReset = 2; 
 			--m_AmountOfLives;
 			pObject->GetSubject()->Notify(Event::PlayerDeath, pObject);
-			if (m_AmountOfLives >= 0)
+			pSprite->SetMaxedFrames(4);
+			pSprite->SetDestRectY(0);
+			pSprite->SetUpdate(true);
+			if (m_AmountOfLives > 0)
 			{
 				Reset();
 			}
@@ -101,9 +112,5 @@ void CharacterComponent::Reset()
 	pState->SetLifeState(pStateManager->GetLifeState("InvincibleState"));
 	pState->SetMoveStateY(pStateManager->GetMoveStateY("MoveStateYIdle"));
 	m_IsInvincable = true;
-	SpriteComponent* pSprite = GetGameObject()->GetComponent<SpriteComponent>(ComponentName::Sprite);
-	pSprite->SetMaxedFrames(4);
-	pSprite->SetDestRectY(0);
-	pSprite->SetUpdate(true);
 	m_IsDead = false;
 }

@@ -26,6 +26,15 @@ EnemyComponent::EnemyComponent(unsigned char enemyType, const float amountOfSecI
 
 void EnemyComponent::Initialize()
 {
+	m_pColliderComp = { nullptr };
+	m_pStateComp = { nullptr };
+	m_AmountOfSecAlive = { 0 };
+	m_IsRaycasting = { false };
+	m_IsLastStateJump = { true };
+	m_AmountOfRaycast = { 0 };
+	m_TimeForNextCollisionCheck = { 0 };
+
+
 	GameObject* pObject = GetGameObject(); 
 	if (pObject->HasComponent(ComponentName::State))
 	{

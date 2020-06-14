@@ -35,6 +35,8 @@ class Scene;
 		void DeactivateNonActiveGameObjects()noexcept(false);
 		void SetIsRenderingCollision(bool isRenderingCollision)noexcept {m_IsRenderingCollision = isRenderingCollision;}
 		bool GetIsRenderingCollision()const noexcept { return m_IsRenderingCollision; }
+		void SetReset() { m_Reset = true; };
+		void Reset();
 	private:
 		friend class Singleton<SceneManager>;
 		SceneManager();
@@ -43,5 +45,6 @@ class Scene;
 		size_t m_CurrentScene;
 		UI m_CurrentUIScene;
 		bool m_IsRenderingCollision;
+		bool m_Reset;
 	};
 }

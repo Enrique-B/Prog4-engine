@@ -59,7 +59,7 @@ void Fried::FriedEngine::AddInput(const std::vector <GameObject*>& pCharacters)
 {
 	InputManager* pInput = Fried::InputManager::GetInstance();
 #ifdef _DEBUG
-	pInput->AddCommand(Input{ new ChangeSceneCommand{}, inputState::pressed, SDL_SCANCODE_F1 });
+	//pInput->AddCommand(Input{ new ChangeSceneCommand{}, inputState::pressed, SDL_SCANCODE_F1 });
 	pInput->AddCommand(Input{ new DebugRenderCommand{}, inputState::pressed, SDL_SCANCODE_F2 });
 #endif // _DEBUG
 	pInput->AddCommand(Input{ new MoveLeftCommand{pCharacters[0]}, inputState::down, SDL_SCANCODE_A, 0, ControllerButton::DPadLeft });

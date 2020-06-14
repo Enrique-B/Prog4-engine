@@ -34,6 +34,8 @@ public:
 	PlayerObserver& operator=(PlayerObserver&& other) = delete;
 	virtual~PlayerObserver() = default;
 	virtual void Notify(Event event, GameObject* pObject)noexcept override;
+	void SetPlayer1Lives(unsigned int lives)noexcept { m_LivesPlayer1 = lives; };
+	void SetPlayer2Lives(unsigned int lives)noexcept { m_LivesPlayer2 = lives; };
 private:
 	unsigned int m_LivesPlayer1;
 	unsigned int m_LivesPlayer2;
@@ -54,4 +56,5 @@ public:
 private:
 	int m_AmountOfEnemies;
 	bool m_IsNextLevelUnlocked;
+
 };
