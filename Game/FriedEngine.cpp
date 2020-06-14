@@ -58,10 +58,9 @@ void Fried::FriedEngine::AddInput(const std::vector <GameObject*>& pCharacters)
 {
 	InputManager* pInput = Fried::InputManager::GetInstance();
 #ifdef _DEBUG
-	pInput->AddCommand(Input{ new ChangeSceneCommand{}, inputState::pressed, SDL_SCANCODE_F1, 0, ControllerButton::StartButton });
+	pInput->AddCommand(Input{ new ChangeSceneCommand{}, inputState::pressed, SDL_SCANCODE_F1 });
 	pInput->AddCommand(Input{ new DebugRenderCommand{}, inputState::pressed, SDL_SCANCODE_F2 });
 #endif // _DEBUG
-
 	pInput->AddCommand(Input{ new MoveLeftCommand{pCharacters[0]}, inputState::down, SDL_SCANCODE_A, 0, ControllerButton::DPadLeft });
 	pInput->AddCommand(Input{ new MoveRightCommand{pCharacters[0]}, inputState::down, SDL_SCANCODE_D, 0, ControllerButton::DPadRight });
 	pInput->AddCommand(Input{ new JumpCommand{pCharacters[0]}, inputState::pressed, SDL_SCANCODE_W, 0, ControllerButton::ButtonA });
@@ -75,8 +74,9 @@ void Fried::FriedEngine::AddInput(const std::vector <GameObject*>& pCharacters)
 	pInput->AddCommand(Input{ new JumpCommand{pCharacters[1]}, inputState::pressed, SDL_SCANCODE_UP, 1, ControllerButton::ButtonA });
 	pInput->AddCommand(Input{ new ShootBubbleCommand{pCharacters[1]}, inputState::pressed, SDL_SCANCODE_DOWN, 1, ControllerButton::ButtonB });
 	// releasing will make it idle again like how it should be 
-	pInput->AddCommand(Input{ new ReleaseMovementCommand{pCharacters[1]}, inputState::release, SDL_SCANCODE_LEFT, 0, ControllerButton::DPadLeft });
-	pInput->AddCommand(Input{ new ReleaseMovementCommand{pCharacters[1]}, inputState::release, SDL_SCANCODE_RIGHT, 0, ControllerButton::DPadRight });
+	pInput->AddCommand(Input{ new ReleaseMovementCommand{pCharacters[1]}, inputState::release, SDL_SCANCODE_LEFT, 1, ControllerButton::DPadLeft });
+	pInput->AddCommand(Input{ new ReleaseMovementCommand{pCharacters[1]}, inputState::release, SDL_SCANCODE_RIGHT, 1, ControllerButton::DPadRight });
+	pInput->AddCommand(Input{ new PauseCommand{}, inputState::pressed, SDL_SCANCODE_RETURN, 0, ControllerButton::StartButton });
 }
 
 void Fried::FriedEngine::MakeUIScenes()
@@ -98,4 +98,12 @@ void Fried::FriedEngine::MakeUIScenes()
 	pObject->GetTransform()->SetResetPosition(Fried::float2(600, 0));
 	pGameUI->AddGameObject(pObject);
 	pSceneManager->AddUIScene(pGameUI, SceneManager::UI::GameMenu);
+
+	pGameUI = new Fried::Scene{"UIScenePause"};
+	pObject = new GameObject{};
+	pObject->AddComponent(new TextComponent{ "PAUSE ||", "Lingua.otf", 50 });
+	pObject->GetTransform()->SetResetPosition(Fried::float2(300, 0));
+	pGameUI->AddGameObject(pObject);
+
+	pSceneManager->AddUIScene(pGameUI, SceneManager::UI::PauseMenu);
 }

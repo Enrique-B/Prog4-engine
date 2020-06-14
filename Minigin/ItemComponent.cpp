@@ -11,6 +11,7 @@
 
 ItemComponent::ItemComponent(unsigned char enemyType) noexcept
 	:m_EnemyType{enemyType}
+	, m_CharacterNumber{0}
 {
 	SetComponentName(ComponentName::Item);
 }

@@ -138,3 +138,17 @@ void DebugRenderCommand::Execute()
 	Fried::SceneManager* pManager = Fried::SceneManager::GetInstance();
 	pManager->SetIsRenderingCollision(!pManager->GetIsRenderingCollision());
 }
+
+void PauseCommand::Execute()
+{
+	Fried::SceneManager* pManager = Fried::SceneManager::GetInstance();
+	Fried::SceneManager::UI UI = pManager->GetUI();
+	if (UI == Fried::SceneManager::UI::PauseMenu)
+	{
+		pManager->SetUIScene(Fried::SceneManager::UI::GameMenu);
+	}
+	else if (UI == Fried::SceneManager::UI::GameMenu)
+	{
+		pManager->SetUIScene(Fried::SceneManager::UI::PauseMenu);
+	}
+}

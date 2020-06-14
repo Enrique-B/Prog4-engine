@@ -2,6 +2,7 @@
 #include <vector>
 enum class Event;
 class Observer;
+class GameObject;
 class Subject
 {
 public: 
@@ -14,7 +15,7 @@ public:
 
 	void AddObserver(Observer* pObserver)noexcept;
 	void RemoveObserver(Observer* pObserver)noexcept;
-	void Notify(Event event)noexcept;
+	void Notify(Event event, GameObject* pObject)noexcept;
 private: 
 	std::vector<Observer*> m_pObservers;
 };

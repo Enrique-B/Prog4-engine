@@ -14,7 +14,7 @@ Input::Input(Command* pCom, inputState inputState, SDL_Scancode scan, size_t con
 	state = inputState;
 	keyboardKey = scan;
 	useKeyboard = true;
-	if (controllerNum < MaxNumbersOfControllers)
+	if (controllerNum <= MaxNumbersOfControllers)
 	{
 		useController = true;
 		controllerNumber = controllerNum;
@@ -55,7 +55,7 @@ Input::Input(Command* pCom, inputState inputState, size_t controllerNum, Control
 	pCommand = pCom;
 	state = inputState;
 	useKeyboard = false;
-	if (controllerNum < MaxNumbersOfControllers)
+	if (controllerNum <= MaxNumbersOfControllers)
 	{
 		useController = true;
 		controllerNumber = controllerNum;
@@ -133,7 +133,7 @@ bool Fried::InputManager::ProcessInput()noexcept
 {
 	ZeroMemory(&m_CurrentState, sizeof(XINPUT_STATE));
 	for (size_t i = 0; i < MaxNumbersOfControllers; i++)
-		XInputGetState(0, &m_CurrentState[i]);
+		XInputGetState(DWORD(i), &m_CurrentState[i]);
 	SDL_Event e{};
 	keyboardState = SDL_GetKeyboardState(NULL);
 	while (SDL_PollEvent(&e))
@@ -238,5 +238,4 @@ void Fried::InputManager::HandleInput()noexcept
 
 void Fried::InputManager::RemoveAllCommands()noexcept
 {
-	m_CommandVector.clear();
 }

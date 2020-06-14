@@ -14,7 +14,7 @@
 #include "StateManager.h"
 
 Fried::Scene::Scene(const std::string& name) noexcept
-	: m_Name(name), m_TimeUntilNextUpdate{ 0 }, m_TimeUntilNextScene{ 0 },m_pObserver{ new Observer{this} }
+	: m_Name(name), m_TimeUntilNextUpdate{ 0 }, m_TimeUntilNextScene{ 0 },m_pObserver{ new EnemyObserver{this} }
 {
 }
 
@@ -172,7 +172,7 @@ void Fried::Scene::Update(float elapsedSec)
 	{
 		m_pObjects[i]->Update(elapsedSec);
 	}
-	if (m_pObserver->IsNextLevelUnlocked())
+	if (static_cast<EnemyObserver*>(m_pObserver)->IsNextLevelUnlocked())
 	{
 		m_TimeUntilNextScene += elapsedSec;
 	}
@@ -214,7 +214,8 @@ void Fried::Scene::DeactivateNonActiveGameObjects()noexcept
 			}
 		}
 	}
-	if (m_pObserver->IsNextLevelUnlocked() && m_TimeUntilNextScene > 3.f)
+	
+	if (static_cast<EnemyObserver*>(m_pObserver)->IsNextLevelUnlocked() && m_TimeUntilNextScene > 3.f)
 	{
 		m_TimeUntilNextScene = 0;
 		NextLevel();

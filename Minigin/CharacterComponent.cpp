@@ -42,7 +42,7 @@ void CharacterComponent::Update(float elapsedSec) noexcept
 			// insert random number for reset 
 			m_AmountOfSecBeforeReset = 2; 
 			--m_AmountOfLives;
-			//if (m_AmountOfLives >= 0)
+			if (m_AmountOfLives >= 0)
 			{
 				Reset();
 			}

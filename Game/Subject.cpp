@@ -22,11 +22,11 @@ void Subject::RemoveObserver(Observer* pObserver)noexcept
 	}
 }
 
-void Subject::Notify(Event event)noexcept
+void Subject::Notify(Event event, GameObject* pObject)noexcept
 {
 	size_t size = m_pObservers.size();
 	for (size_t i = 0; i < size; i++)
 	{
-		m_pObservers[i]->Notify(event);
+		m_pObservers[i]->Notify(event, pObject);
 	}
 }

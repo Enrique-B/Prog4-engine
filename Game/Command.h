@@ -103,3 +103,16 @@ public:
 
 	void Execute();
 };
+
+class PauseCommand : public Command
+{
+public:
+	PauseCommand() : Command(nullptr) {};
+	PauseCommand(const PauseCommand& other) = delete;
+	PauseCommand(PauseCommand&& other) = delete;
+	PauseCommand& operator=(const PauseCommand& other) = delete;
+	PauseCommand& operator=(PauseCommand&& other) = delete;
+	~PauseCommand() = default;
+
+	void Execute();
+};

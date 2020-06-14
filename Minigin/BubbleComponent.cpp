@@ -96,7 +96,7 @@ void BubbleComponent::Update(float elapsedSec)
 		{
 			if (m_IsHitByEnemy)
 			{
-				pObject->GetSubject()->Notify(Event::EnemyDeath);
+				pObject->GetSubject()->Notify(Event::EnemyDeath, pObject);
 				std::vector<GameObject*> pNonActiveObjects = pObject->GetScene()->GetDeactivatedGameObjects();
 				const size_t size{ pNonActiveObjects.size() };
 				for (size_t i = 0; i < size; i++)

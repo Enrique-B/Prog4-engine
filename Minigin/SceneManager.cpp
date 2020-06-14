@@ -51,14 +51,14 @@ void Fried::SceneManager::NextScene()noexcept
 }
 
 
-Fried::Scene* Fried::SceneManager::GetNextScene()noexcept
+Fried::Scene* Fried::SceneManager::GetNextScene()const noexcept
 {
 	if (m_CurrentScene + 1 > m_pScenes.size() - 1)
 		return nullptr;
 	return m_pScenes[m_CurrentScene + 1];
 }
 
-Fried::Scene* Fried::SceneManager::GetPreviousScene()noexcept
+Fried::Scene* Fried::SceneManager::GetPreviousScene()const noexcept
 {
 	if (m_CurrentScene - 1 < 0)
 		return nullptr;
@@ -80,7 +80,7 @@ void Fried::SceneManager::CollisionUpdate(float elapsedSec)noexcept
 
 void Fried::SceneManager::Render()noexcept
 {
-	if (m_CurrentUIScene == UI::GameMenu)
+	if (m_CurrentUIScene != UI::StartMenu)
 	{
 		m_pScenes[m_CurrentScene]->Render();
 		if (m_IsRenderingCollision)

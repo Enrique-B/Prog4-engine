@@ -104,7 +104,11 @@
       <Command>xcopy "$(SolutionDir)3rdParty\SDL2\lib\x64\SDL2.dll" "$(OutputPath)" /R /Y
 xcopy "$(SolutionDir)3rdParty\SDL2_image\lib\x64\*.dll" "$(OutputPath)" /R /Y
 xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\x64\*.dll" "$(OutputPath)" /R /Y
-xcopy "$(SolutionDir)3rdParty\SDL2_mixer-2.0.2\lib\x64\SDL2_mixer.dll" "$(OutputPath)" /R /Y</Command>
+xcopy "$(SolutionDir)3rdParty\SDL2_mixer-2.0.2\lib\x64\SDL2_mixer.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)3rdParty\Visual Leak Detector\bin\Win64\vld_x64.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)3rdParty\Visual Leak Detector\bin\Win64\vld_x64.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)3rdParty\Visual Leak Detector\bin\Win64\dbghelp.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)3rdParty\Visual Leak Detector\bin\Win64\Microsoft.DTfW.DHL.manifest" "$(OutputPath)" /R /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -129,7 +133,10 @@ xcopy "$(SolutionDir)3rdParty\SDL2_mixer-2.0.2\lib\x64\SDL2_mixer.dll" "$(Output
       <Command>xcopy "$(SolutionDir)3rdParty\SDL2\lib\x86\SDL2.dll" "$(OutputPath)" /R /Y
 xcopy "$(SolutionDir)3rdParty\SDL2_image\lib\x86\*.dll" "$(OutputPath)" /R /Y
 xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\x86\*.dll" "$(OutputPath)" /R /Y
-xcopy "$(SolutionDir)3rdParty\SDL2_mixer-2.0.2\lib\x86\SDL2_mixer.dll" "$(OutputPath)" /R /Y</Command>
+xcopy "$(SolutionDir)3rdParty\SDL2_mixer-2.0.2\lib\x86\SDL2_mixer.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)3rdParty\Visual Leak Detector\bin\Win32\vld_x64.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)3rdParty\Visual Leak Detector\bin\Win32\dbghelp.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)3rdParty\Visual Leak Detector\bin\Win32\Microsoft.DTfW.DHL.manifest" "$(OutputPath)" /R /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -158,7 +165,10 @@ xcopy "$(SolutionDir)3rdParty\SDL2_mixer-2.0.2\lib\x86\SDL2_mixer.dll" "$(Output
       <Command>xcopy "$(SolutionDir)3rdParty\SDL2\lib\x86\SDL2.dll" "$(OutputPath)" /R /Y
 xcopy "$(SolutionDir)3rdParty\SDL2_image\lib\x86\*.dll" "$(OutputPath)" /R /Y
 xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\x86\*.dll" "$(OutputPath)" /R /Y
-xcopy "$(SolutionDir)3rdParty\SDL2_mixer-2.0.2\lib\x86\SDL2_mixer.dll" "$(OutputPath)" /R /Y</Command>
+xcopy "$(SolutionDir)3rdParty\SDL2_mixer-2.0.2\lib\x86\SDL2_mixer.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)3rdParty\Visual Leak Detector\bin\Win32\vld_x64.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)3rdParty\Visual Leak Detector\bin\Win32\dbghelp.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)3rdParty\Visual Leak Detector\bin\Win32\Microsoft.DTfW.DHL.manifest" "$(OutputPath)" /R /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -187,7 +197,11 @@ xcopy "$(SolutionDir)3rdParty\SDL2_mixer-2.0.2\lib\x86\SDL2_mixer.dll" "$(Output
       <Command>xcopy "$(SolutionDir)3rdParty\SDL2\lib\x64\SDL2.dll" "$(OutputPath)" /R /Y
 xcopy "$(SolutionDir)3rdParty\SDL2_image\lib\x64\*.dll" "$(OutputPath)" /R /Y
 xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\x64\*.dll" "$(OutputPath)" /R /Y
-xcopy "$(SolutionDir)3rdParty\SDL2_mixer-2.0.2\lib\x64\SDL2_mixer.dll" "$(OutputPath)" /R /Y</Command>
+xcopy "$(SolutionDir)3rdParty\SDL2_mixer-2.0.2\lib\x64\SDL2_mixer.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)3rdParty\Visual Leak Detector\bin\Win64\vld_x64.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)3rdParty\Visual Leak Detector\bin\Win64\vld_x64.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)3rdParty\Visual Leak Detector\bin\Win64\dbghelp.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)3rdParty\Visual Leak Detector\bin\Win64\Microsoft.DTfW.DHL.manifest" "$(OutputPath)" /R /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
