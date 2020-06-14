@@ -14,8 +14,9 @@
 #include "StateManager.h"
 
 Fried::Scene::Scene(const std::string& name) noexcept
-	: m_Name(name), m_TimeUntilNextUpdate{ 0 }, m_TimeUntilNextScene{ 0 },m_pObserver{ new EnemyObserver{this} }
+	: m_Name(name), m_TimeUntilNextUpdate{ 0 }, m_TimeUntilNextScene{ 0 }
 {
+	m_pObservers.push_back(new EnemyObserver{ this });
 }
 
 Fried::Scene::~Scene()
@@ -35,7 +36,11 @@ Fried::Scene::~Scene()
 		SafeDelete(m_pDeactivatedGameObjects[i]);
 	}
 	m_pDeactivatedGameObjects.clear();
-	SafeDelete(m_pObserver);
+	size = m_pObservers.size();
+	for (size_t i = 0; i < size; i++)
+	{
+		SafeDelete(m_pObservers[i]);
+	}
 }
 
 void Fried::Scene::AddGameObject(GameObject* pObject)
@@ -94,11 +99,15 @@ void Fried::Scene::RemoveGameObject(GameObject* object)
 		const size_t colliderSize{ colliders.size() };
 		for (size_t i = 0; i < colliderSize; i++)
 		{
-			RemoveCollider(colliders[i]);			
+			RemoveCollider(colliders[i]);
 		}
 	}
 	object->SetScene(nullptr);
-	object->GetSubject()->RemoveObserver(m_pObserver);
+	const size_t size{ m_pObservers.size() };
+	for (size_t i = 0; i < size; i++)
+	{
+		object->GetSubject()->RemoveObserver(m_pObservers[0]);
+	}
 }
 
 void Fried::Scene::RemoveGameObjectFromNonActive(GameObject* pObject) noexcept(false)
@@ -172,7 +181,7 @@ void Fried::Scene::Update(float elapsedSec)
 	{
 		m_pObjects[i]->Update(elapsedSec);
 	}
-	if (static_cast<EnemyObserver*>(m_pObserver)->IsNextLevelUnlocked())
+	if (static_cast<EnemyObserver*>(m_pObservers[0])->IsNextLevelUnlocked())
 	{
 		m_TimeUntilNextScene += elapsedSec;
 	}
@@ -215,7 +224,7 @@ void Fried::Scene::DeactivateNonActiveGameObjects()noexcept
 		}
 	}
 	
-	if (static_cast<EnemyObserver*>(m_pObserver)->IsNextLevelUnlocked() && m_TimeUntilNextScene > 3.f)
+	if (static_cast<EnemyObserver*>(m_pObservers[0])->IsNextLevelUnlocked() && m_TimeUntilNextScene > 3.f)
 	{
 		m_TimeUntilNextScene = 0;
 		NextLevel();
@@ -315,6 +324,15 @@ bool Fried::Scene::RaycastPLayer(const Fried::line& line, Fried::HitInfo& hitinf
 		}
 	}
 	return hitinfo.hit;
+}
+
+void Fried::Scene::AddObserver(Observer* pObserver) noexcept(false)
+{
+	const auto it = std::find(m_pObservers.cbegin(), m_pObservers.cend(), pObserver);
+	if (it == m_pObservers.cend())
+	{
+		m_pObservers.push_back(pObserver);
+	}
 }
 
 void Fried::Scene::CheckStaticCollision(size_t index, const std::vector<CollisionLine>& lines)

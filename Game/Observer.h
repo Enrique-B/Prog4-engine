@@ -35,6 +35,8 @@ public:
 	virtual~PlayerObserver() = default;
 	virtual void Notify(Event event, GameObject* pObject)noexcept override;
 private:
+	unsigned int m_LivesPlayer1;
+	unsigned int m_LivesPlayer2;
 };
 
 class EnemyObserver final : public Observer

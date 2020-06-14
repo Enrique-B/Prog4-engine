@@ -33,9 +33,10 @@ namespace Fried
 
 		const std::vector<GameObject*>& GetChildren()const noexcept { return m_pObjects; }
 		const std::vector<GameObject*>& GetDeactivatedGameObjects()const noexcept { return m_pDeactivatedGameObjects; }
-		Observer* GetObserver()const noexcept { return m_pObserver; }
+		const std::vector<Observer*>& GetObservers()const noexcept { return m_pObservers; }
 		bool Raycast(const Fried::line& line, bool raycastStaticColliders, bool raycastDynamicColiders, Fried::HitInfo& hitInfo)const noexcept;
 		bool RaycastPLayer(const Fried::line& line, Fried::HitInfo& hitinfo)const noexcept;
+		void AddObserver(Observer* pObserver)noexcept(false);
 	private:
 		std::vector<GameObject*> m_pObjects{};
 		std::vector<GameObject*> m_pDeactivatedGameObjects{};
@@ -44,7 +45,7 @@ namespace Fried
 		std::vector<ColliderComponent*> m_DynamicColliders;
 		float m_TimeUntilNextUpdate;
 		float m_TimeUntilNextScene;
-		Observer* m_pObserver;
+		std::vector<Observer*> m_pObservers;
 
 		void NextLevel()noexcept; 
 		void CheckStaticCollision(size_t index, const std::vector<CollisionLine>& lines);

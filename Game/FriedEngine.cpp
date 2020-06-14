@@ -7,7 +7,7 @@
 #include "GameObject.h"
 #include "StateManager.h"
 #include "BaseState.h"
-
+#include "Observer.h"
 #include "Components.h"
 
 #define keyBoard1ControllerSetup
@@ -17,6 +17,7 @@
 void Fried::FriedEngine::LoadGame()
 {
 	Addstates();
+	MakeUIScenes();
 	BubleBobbleLevelDataReader pData{};
 	pData.Read();
 	const std::vector<Fried::Scene*> pScenes{ pData.GetScenes() };
@@ -32,7 +33,6 @@ void Fried::FriedEngine::LoadGame()
 	{
 		pSceneManager->AddScene(pScenes[i]);
 	}
-	MakeUIScenes();
 }
 
 void Fried::FriedEngine::Addstates()
@@ -97,6 +97,7 @@ void Fried::FriedEngine::MakeUIScenes()
 	pObject->AddComponent(new ScoreComponent{ unsigned char(-1) });
 	pObject->GetTransform()->SetResetPosition(Fried::float2(600, 0));
 	pGameUI->AddGameObject(pObject);
+	pGameUI->AddObserver(new PlayerObserver{ pGameUI });
 	pSceneManager->AddUIScene(pGameUI, SceneManager::UI::GameMenu);
 
 	pGameUI = new Fried::Scene{"UIScenePause"};

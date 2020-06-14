@@ -12,6 +12,7 @@ public:
 	unsigned int GetCharacterNumber()const noexcept { return m_CharacterNumber; }
 	virtual void Update(float elapsedSec)noexcept override;
 	bool IsDead()const noexcept { return m_IsDead; }
+	int GetAmountOfLives()const noexcept { return m_AmountOfLives; }
 private: 
 	bool m_IsDead;
 	bool m_IsInvincable; 

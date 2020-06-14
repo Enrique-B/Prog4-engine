@@ -42,7 +42,7 @@ void EnemyObserver::SetAmountOfEnemies(int amountOfEnemies) noexcept
 }
 
 PlayerObserver::PlayerObserver(Fried::Scene* pScene) noexcept
-	:Observer(pScene)
+	:Observer(pScene), m_LivesPlayer1{4}, m_LivesPlayer2{ 4 }
 {
 
 }
@@ -57,7 +57,13 @@ void PlayerObserver::Notify(Event event, GameObject* pObject)noexcept
 		if (pObject->HasComponent(ComponentName::Character))
 		{
 			CharacterComponent* pChar = pObject->GetComponent<CharacterComponent>(ComponentName::Character);
-			pChar;
+			int amountOfLives = pChar->GetAmountOfLives();
+			if (amountOfLives == 0)
+			{
+				pObject->SetIsActive(false);
+			}
+			pChar->GetCharacterNumber() == 0 ? m_LivesPlayer1 = amountOfLives : m_LivesPlayer2 = amountOfLives;
+			std::cout << "Player1Lives:  " << m_LivesPlayer1 << "Player2Lives " << m_LivesPlayer2 << " \n";
 		}
 		break;
 	default:

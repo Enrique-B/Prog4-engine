@@ -9,8 +9,7 @@ Fried::SceneManager::~SceneManager()
 	{
 		SafeDelete(m_pScenes[i]);
 	}
-	size = m_pUIScenes.size();
-	for (size_t i = 0; i < size; i++)
+	for (size_t i = 0; i < m_pUIScenes.size(); i++)
 	{
 		SafeDelete(m_pUIScenes[i]);
 	}
@@ -97,7 +96,6 @@ void Fried::SceneManager::DeactivateNonActiveGameObjects() noexcept(false)
 Fried::SceneManager::SceneManager()
 	: m_CurrentScene{ 0 }, m_IsRenderingCollision(false), m_CurrentUIScene{ UI::GameMenu }
 {
-	m_pUIScenes.reserve(3);
 	m_pUIScenes.push_back(nullptr);
 	m_pUIScenes.push_back(nullptr);
 	m_pUIScenes.push_back(nullptr);

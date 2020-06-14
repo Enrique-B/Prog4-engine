@@ -137,7 +137,7 @@ void BubleBobbleLevelDataReader::ReadEnemyData()noexcept
 	{
 		if (temp == 0b00000000)
 		{
-			static_cast<EnemyObserver*>(m_Scenes[levelNumber]->GetObserver())->SetAmountOfEnemies(amountOfenemies);
+			static_cast<EnemyObserver*>(m_Scenes[levelNumber]->GetObservers()[0])->SetAmountOfEnemies(amountOfenemies);
 			amountOfenemies = 0;
 			levelNumber++;
 			pBinReader->Read(temp, input); // read the reading the "fist byte" again 

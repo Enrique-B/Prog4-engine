@@ -32,7 +32,12 @@ void GameObject::Initialize()noexcept(false)
 	{
 		m_pComponents[i]->Initialize();
 	}
-	m_pSubject->AddObserver(m_pScene->GetObserver());
+	std::vector<Observer*> pObservers = m_pScene->GetObservers();
+	const size_t ObserverSize = pObservers.size();
+	for (size_t i = 0; i < ObserverSize; i++)
+	{
+		m_pSubject->AddObserver(pObservers[i]);
+	}
 }
 
 void GameObject::Update(float elapsedSec)

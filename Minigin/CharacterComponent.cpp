@@ -8,13 +8,16 @@
 #include "StateManager.h"
 #include "SpriteComponent.h"
 #include "BubbleComponent.h"
+#include "../Game/Subject.h"
+#include "../Game/Observer.h"
+
 
 CharacterComponent::CharacterComponent(unsigned int characterNumber)
 	: m_IsDead{false}
 	, m_IsInvincable{false}
 	, m_AmountOfSecBeforeReset{2}
 	, m_AmountOfSecOfInvincability{3}
-	, m_AmountOfLives{3}
+	, m_AmountOfLives{4}
 	, m_CharacterNumber{ characterNumber }
 {
 	SetComponentName(ComponentName::Character);
@@ -42,6 +45,7 @@ void CharacterComponent::Update(float elapsedSec) noexcept
 			// insert random number for reset 
 			m_AmountOfSecBeforeReset = 2; 
 			--m_AmountOfLives;
+			pObject->GetSubject()->Notify(Event::PlayerDeath, pObject);
 			if (m_AmountOfLives >= 0)
 			{
 				Reset();
